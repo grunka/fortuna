@@ -13,7 +13,26 @@ public class CounterTest {
 
     @Before
     public void before() {
-        counter = new Counter();
+        counter = new Counter(128);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailForInvalidNumberOfBits() throws Exception {
+        new Counter(127);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailForTooFewBits() throws Exception {
+        new Counter(0);
+    }
+
+    @Test
+    public void shouldRollOverBackToZero() throws Exception {
+        Counter smallCounter = new Counter(8);
+        for (int i = 0; i < 256; i++) {
+            smallCounter.increment();
+        }
+        assertTrue(smallCounter.isZero());
     }
 
     @Test
