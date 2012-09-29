@@ -60,4 +60,10 @@ public class PoolTest {
         assertArrayEquals(digest.digest(bytes), pool.getAndClear());
         assertEquals(0, pool.size());
     }
+
+    @Test
+    public void shouldGet32BytesOfSeedData() throws Exception {
+        byte[] bytes = pool.getAndClear();
+        assertEquals(32, bytes.length);
+    }
 }
