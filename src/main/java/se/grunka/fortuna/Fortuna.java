@@ -1,10 +1,16 @@
 package se.grunka.fortuna;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
-
+    private static final int[] POWERS_OF_TWO = new int[32];
+    static {
+        for (int power = 0; power < POWERS_OF_TWO.length; power++) {
+            POWERS_OF_TWO[power] = (int) Math.pow(2, power);
+        }
+    }
     private long lastReseedTime = 0;
     private long reseedCount = 0;
     private final Generator generator;
@@ -15,6 +21,7 @@ public class Fortuna extends Random {
         for (int pool = 0; pool < pools.length; pool++) {
             pools[pool] = new Pool();
         }
+        //TODO wait until min_pool_size is reached (or seed file is read)
         return new Fortuna(new Generator(), pools);
     }
 
@@ -24,13 +31,19 @@ public class Fortuna extends Random {
     }
 
     private byte[] randomData(int bytes) {
-        if (pools[0].size() >= MIN_POOL_SIZE && System.currentTimeMillis() - lastReseedTime > 100) {
+        long now = System.currentTimeMillis();
+        if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
+            lastReseedTime = now;
             reseedCount++;
-            byte[] seed = new byte[0];
+            byte[] seed = new byte[pools.length * 32]; // Maximum potential length
+            int seedLength = 0;
             for (int pool = 0; pool < pools.length; pool++) {
-                //TODO all this...
+                if (reseedCount % POWERS_OF_TWO[pool] == 0) {
+                    System.arraycopy(pools[pool].getAndClear(), 0, seed, seedLength, 32);
+                    seedLength += 32;
+                }
             }
-            generator.reseed(seed);
+            generator.reseed(Arrays.copyOf(seed, seedLength));
         }
         if (reseedCount == 0) {
             throw new IllegalStateException("Generator not reseeded yet");
@@ -39,6 +52,7 @@ public class Fortuna extends Random {
         }
     }
 
+    //TODO thread safety
     //TODO seed file management
 
     @Override
