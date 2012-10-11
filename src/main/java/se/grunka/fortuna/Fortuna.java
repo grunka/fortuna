@@ -2,7 +2,6 @@ package se.grunka.fortuna;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
@@ -31,7 +30,7 @@ public class Fortuna extends Random {
             @Override
             public void event(EventScheduler scheduler, EventAdder adder) {
                 adder.add(new byte[12]);
-                scheduler.schedule(100, TimeUnit.MILLISECONDS);
+                //scheduler.schedule(100, TimeUnit.MILLISECONDS);
             }
         });
         //TODO ... or wait for seed file to be used
@@ -86,7 +85,7 @@ public class Fortuna extends Random {
         for (int i = 0; i < bytes.length; i++) {
             result |= bytes[i] << (8 * i);
         }
-        return result;
+        return result >>> (bytes.length * 8 - bits);
     }
 
     @Override
