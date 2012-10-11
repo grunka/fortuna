@@ -1,7 +1,12 @@
 package se.grunka.fortuna;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
@@ -26,11 +31,48 @@ public class Fortuna extends Random {
             pools[pool] = new Pool();
         }
         Accumulator accumulator = new Accumulator(pools);
+        //TODO ADD ALL THE SOURCES
+        accumulator.addSource(new EntropySource() {
+            private long lastTime = 0;
+            @Override
+            public void event(EventScheduler scheduler, EventAdder adder) {
+                long now = System.nanoTime();
+                long elapsed = now - lastTime;
+                lastTime = now;
+                adder.add(twoLeastSignificantBytes(elapsed));
+                scheduler.schedule(10, TimeUnit.MILLISECONDS);
+            }
+        });
+        accumulator.addSource(new EntropySource() {
+            private final List<GarbageCollectorMXBean> garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+
+            @Override
+            public void event(EventScheduler scheduler, EventAdder adder) {
+                long sum = 0;
+                for (GarbageCollectorMXBean garbageCollectorMXBean : garbageCollectorMXBeans) {
+                    sum += garbageCollectorMXBean.getCollectionCount() + garbageCollectorMXBean.getCollectionTime();
+                }
+                adder.add(twoLeastSignificantBytes(sum));
+                scheduler.schedule(1000, TimeUnit.MILLISECONDS);
+            }
+        });
+        accumulator.addSource(new EntropySource() {
+
+            private final OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+
+            @Override
+            public void event(EventScheduler scheduler, EventAdder adder) {
+                double systemLoadAverage = operatingSystemMXBean.getSystemLoadAverage();
+                adder.add(twoLeastSignificantBytes(Double.doubleToLongBits(systemLoadAverage)));
+                scheduler.schedule(1000, TimeUnit.MILLISECONDS);
+            }
+        });
         accumulator.addSource(new EntropySource() {
             @Override
             public void event(EventScheduler scheduler, EventAdder adder) {
-                adder.add(new byte[12]);
-                //scheduler.schedule(100, TimeUnit.MILLISECONDS);
+                long freeMemory = Runtime.getRuntime().freeMemory();
+                adder.add(twoLeastSignificantBytes(freeMemory));
+                scheduler.schedule(100, TimeUnit.MILLISECONDS);
             }
         });
         //TODO ... or wait for seed file to be used
@@ -42,6 +84,13 @@ public class Fortuna extends Random {
             }
         }
         return new Fortuna(new Generator(), pools);
+    }
+
+    private static byte[] twoLeastSignificantBytes(long value) {
+        byte[] result = new byte[2];
+        result[0] = (byte) (value & 0xff);
+        result[1] = (byte) ((value & 0xff00) >> 8);
+        return result;
     }
 
     private Fortuna(Generator generator, Pool[] pools) {
