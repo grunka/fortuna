@@ -2,19 +2,18 @@ package se.grunka.fortuna;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
-    private static final int[] POWERS_OF_TWO = new int[32];
+    private static final int[] POWERS_OF_TWO = initializePowersOfTwo();
 
-    static {
-        for (int power = 0; power < POWERS_OF_TWO.length; power++) {
-            POWERS_OF_TWO[power] = (int) Math.pow(2, power);
+    private static int[] initializePowersOfTwo() {
+        int[] result = new int[32];
+        for (int power = 0; power < result.length; power++) {
+            result[power] = (int) Math.pow(2, power);
         }
+        return result;
     }
 
     private long lastReseedTime = 0;
@@ -27,21 +26,22 @@ public class Fortuna extends Random {
         for (int pool = 0; pool < pools.length; pool++) {
             pools[pool] = new Pool();
         }
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+        Accumulator accumulator = new Accumulator(pools);
+        accumulator.addSource(new EntropySource() {
             @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = Executors.defaultThreadFactory().newThread(r);
-                thread.setDaemon(true);
-                return thread;
+            public void event(EventScheduler scheduler, EventAdder adder) {
+                adder.add(new byte[12]);
+                scheduler.schedule(100, TimeUnit.MILLISECONDS);
             }
         });
-        scheduler.scheduleWithFixedDelay(new EntropySource(pools) {
-            @Override
-            public void collect() {
-                addEvent(new byte[12]);
+        //TODO ... or wait for seed file to be used
+        while (pools[0].size() < MIN_POOL_SIZE) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new Error("Interrupted while waiting for initialization", e);
             }
-        }, 0, 10, TimeUnit.MILLISECONDS);
-        //TODO wait until min_pool_size is reached (or seed file is read)
+        }
         return new Fortuna(new Generator(), pools);
     }
 
@@ -94,6 +94,6 @@ public class Fortuna extends Random {
 
     @Override
     public synchronized void setSeed(long seed) {
-        throw new UnsupportedOperationException("Setting the seed is not allowed");
+        // Does not do anything
     }
 }

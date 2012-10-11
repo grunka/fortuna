@@ -68,4 +68,12 @@ public class GeneratorTest {
         }
         System.out.println("Arrays.toString(result) = " + Arrays.toString(result));
     }
+
+    @Test
+    public void shouldTestSomeMath() throws Exception {
+        int v = 18;
+        int d = 8;
+        int ceil = (v / d) + (v % d != 0 ? 1 : 0);
+        System.out.println("i = " + ceil);
+    }
 }
