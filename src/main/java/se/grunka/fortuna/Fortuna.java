@@ -82,14 +82,11 @@ public class Fortuna extends Random {
     @Override
     protected int next(int bits) {
         byte[] bytes = randomData(ceil(bits, 8));
-        //TODO get bytes and put into int...
-        return 0;
-    }
-
-    @Override
-    public void nextBytes(byte[] bytes) {
-        //TODO check if this is doable
-        super.nextBytes(bytes);
+        int result = 0;
+        for (int i = 0; i < bytes.length; i++) {
+            result |= bytes[i] << (8 * i);
+        }
+        return result;
     }
 
     @Override
