@@ -56,7 +56,7 @@ public class Generator {
             throw new IllegalArgumentException("Cannot generate " + bytes + " bytes of random data");
         }
         try {
-            return Arrays.copyOf(generateBlocks(Fortuna.ceil(bytes, BLOCK_LENGTH)), bytes);
+            return Arrays.copyOf(generateBlocks(Util.ceil(bytes, BLOCK_LENGTH)), bytes);
         } finally {
             System.arraycopy(generateBlocks(2), 0, key, 0, KEY_LENGTH);
         }
