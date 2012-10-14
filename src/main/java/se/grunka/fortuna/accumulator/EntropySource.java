@@ -1,4 +1,4 @@
-package se.grunka.fortuna;
+package se.grunka.fortuna.accumulator;
 
 public interface EntropySource {
 

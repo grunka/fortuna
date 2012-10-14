@@ -1,4 +1,4 @@
-package se.grunka.fortuna;
+package se.grunka.fortuna.accumulator;
 
 import java.util.concurrent.TimeUnit;
 

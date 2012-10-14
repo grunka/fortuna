@@ -3,6 +3,7 @@ package se.grunka.fortuna;
 import java.util.Arrays;
 import java.util.Random;
 
+import se.grunka.fortuna.accumulator.Accumulator;
 import se.grunka.fortuna.entropy.FreeMemoryEntropySource;
 import se.grunka.fortuna.entropy.GarbageCollectorEntropySource;
 import se.grunka.fortuna.entropy.LoadAverageEntropySource;

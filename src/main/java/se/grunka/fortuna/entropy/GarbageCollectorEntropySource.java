@@ -5,9 +5,9 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import se.grunka.fortuna.EntropySource;
-import se.grunka.fortuna.EventAdder;
-import se.grunka.fortuna.EventScheduler;
+import se.grunka.fortuna.accumulator.EntropySource;
+import se.grunka.fortuna.accumulator.EventAdder;
+import se.grunka.fortuna.accumulator.EventScheduler;
 import se.grunka.fortuna.Util;
 
 public class GarbageCollectorEntropySource implements EntropySource {
