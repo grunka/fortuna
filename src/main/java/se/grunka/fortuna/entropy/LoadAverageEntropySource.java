@@ -2,6 +2,7 @@ package se.grunka.fortuna.entropy;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 import se.grunka.fortuna.accumulator.EntropySource;
@@ -16,7 +17,9 @@ public class LoadAverageEntropySource implements EntropySource {
     @Override
     public void event(EventScheduler scheduler, EventAdder adder) {
         double systemLoadAverage = operatingSystemMXBean.getSystemLoadAverage();
-        adder.add(Util.twoLeastSignificantBytes(Double.doubleToLongBits(systemLoadAverage)));
+        BigDecimal value = BigDecimal.valueOf(systemLoadAverage);
+        long convertedValue = value.movePointRight(value.scale()).longValue();
+        adder.add(Util.twoLeastSignificantBytes(convertedValue));
         scheduler.schedule(1000, TimeUnit.MILLISECONDS);
     }
 }
