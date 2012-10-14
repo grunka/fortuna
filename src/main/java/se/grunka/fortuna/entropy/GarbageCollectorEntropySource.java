@@ -20,6 +20,6 @@ public class GarbageCollectorEntropySource implements EntropySource {
             sum += garbageCollectorMXBean.getCollectionCount() + garbageCollectorMXBean.getCollectionTime();
         }
         adder.add(Util.twoLeastSignificantBytes(sum));
-        scheduler.schedule(1000, TimeUnit.MILLISECONDS);
+        scheduler.schedule(10, TimeUnit.SECONDS);
     }
 }
