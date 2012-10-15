@@ -1,5 +1,7 @@
 package se.grunka.fortuna;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -9,6 +11,7 @@ import se.grunka.fortuna.entropy.GarbageCollectorEntropySource;
 import se.grunka.fortuna.entropy.LoadAverageEntropySource;
 import se.grunka.fortuna.entropy.SchedulingEntropySource;
 import se.grunka.fortuna.entropy.ThreadTimeEntropySource;
+import se.grunka.fortuna.entropy.URandomEntropySource;
 import se.grunka.fortuna.entropy.UptimeEntropySource;
 
 public class Fortuna extends Random {
@@ -41,6 +44,9 @@ public class Fortuna extends Random {
         accumulator.addSource(new FreeMemoryEntropySource());
         accumulator.addSource(new ThreadTimeEntropySource());
         accumulator.addSource(new UptimeEntropySource());
+        if (Files.exists(Paths.get("/dev/urandom"))) {
+            accumulator.addSource(new URandomEntropySource());
+        }
         //TODO ... or wait for seed file to be used
         while (pools[0].size() < MIN_POOL_SIZE) {
             try {
