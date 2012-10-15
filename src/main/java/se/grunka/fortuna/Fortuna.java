@@ -96,6 +96,7 @@ public class Fortuna extends Random {
     @Override
     protected int next(int bits) {
         byte[] bytes = randomData(Util.ceil(bits, 8));
+        System.out.println("Arrays.toString(bytes) = " + Arrays.toString(bytes));
         int result = 0;
         for (int i = 0; i < bytes.length; i++) {
             result |= bytes[i] << (8 * i);

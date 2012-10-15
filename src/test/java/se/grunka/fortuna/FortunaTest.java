@@ -3,6 +3,7 @@ package se.grunka.fortuna;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,6 +19,28 @@ public class FortunaTest {
         } catch (IllegalStateException ignored) {
             fail("Did not wait for initialization");
         }
+    }
+
+    @Test
+    public void shouldProduceRandomNumbers() throws Exception {
+        int[] numbers = new int[10];
+        Fortuna fortuna = Fortuna.createInstance();
+        for (int i = 0; i < 100000; i++) {
+            numbers[fortuna.nextInt(10)]++;
+        }
+        int lowest = Integer.MAX_VALUE;
+        int highest = Integer.MIN_VALUE;
+        for (int number : numbers) {
+            if (number > highest) {
+                highest = number;
+            }
+            if (number < lowest) {
+                lowest = number;
+            }
+        }
+        System.out.println("numbers = " + Arrays.toString(numbers));
+        int percentage = (100 * (highest - lowest)) / lowest;
+        System.out.println("percentage = " + percentage);
     }
 
     @Ignore
