@@ -8,10 +8,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class EventSchedulerImpl implements EventScheduler {
     private final AtomicBoolean scheduled = new AtomicBoolean(false);
     private final int sourceId;
-    private final Map<Integer, EventContext> eventContexts;
+    private final Map<Integer, Context> eventContexts;
     private final ScheduledExecutorService scheduler;
 
-    public EventSchedulerImpl(int sourceId, Map<Integer, EventContext> eventContexts, ScheduledExecutorService scheduler) {
+    public EventSchedulerImpl(int sourceId, Map<Integer, Context> eventContexts, ScheduledExecutorService scheduler) {
         this.sourceId = sourceId;
         this.eventContexts = eventContexts;
         this.scheduler = scheduler;
@@ -23,9 +23,9 @@ public class EventSchedulerImpl implements EventScheduler {
         scheduler.schedule(new Runnable() {
             @Override
             public void run() {
-                EventContext eventContext = eventContexts.get(sourceId);
+                Context context = eventContexts.get(sourceId);
                 scheduled.set(false);
-                eventContext.source.event(eventContext.scheduler, eventContext.adder);
+                context.source.event(context.scheduler, context.adder);
                 if (!scheduled.get()) {
                     scheduler.schedule(this, 0, TimeUnit.MILLISECONDS);
                 }

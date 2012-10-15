@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import se.grunka.fortuna.Pool;
 
 public class Accumulator {
-    private final Map<Integer, EventContext> eventContexts = new ConcurrentHashMap<Integer, EventContext>();
+    private final Map<Integer, Context> eventContexts = new ConcurrentHashMap<Integer, Context>();
     private final AtomicInteger sourceCount = new AtomicInteger(0);
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
         private final ThreadFactory delegate = Executors.defaultThreadFactory();
@@ -33,8 +33,8 @@ public class Accumulator {
         final int sourceId = sourceCount.incrementAndGet();
         EventAdder eventAdder = new EventAdderImpl(sourceId, pools);
         EventScheduler eventScheduler = new EventSchedulerImpl(sourceId, eventContexts, scheduler);
-        EventContext eventContext = new EventContext(entropySource, eventAdder, eventScheduler);
-        eventContexts.put(sourceId, eventContext);
+        Context context = new Context(entropySource, eventAdder, eventScheduler);
+        eventContexts.put(sourceId, context);
         eventScheduler.schedule(0, TimeUnit.MILLISECONDS);
     }
 
