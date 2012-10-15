@@ -9,26 +9,26 @@ import se.grunka.fortuna.accumulator.EventScheduler;
 
 import static org.junit.Assert.assertEquals;
 
-public class FreeMemoryEntropySourceTest {
+public class SchedulingEntropySourceTest {
 
-    private FreeMemoryEntropySource target;
+    private SchedulingEntropySource target;
     private int schedules;
     private int adds;
 
     @Before
     public void before() throws Exception {
-        target = new FreeMemoryEntropySource();
+        target = new SchedulingEntropySource();
         schedules = 0;
         adds = 0;
     }
 
     @Test
-    public void shouldReadFreeMemory() throws Exception {
+    public void shouldUseTimeBetweenCallsToCreateEvents() throws Exception {
         target.event(
                 new EventScheduler() {
                     @Override
                     public void schedule(long delay, TimeUnit timeUnit) {
-                        assertEquals(100, timeUnit.toMillis(delay));
+                        assertEquals(10, timeUnit.toMillis(delay));
                         schedules++;
                     }
                 },
