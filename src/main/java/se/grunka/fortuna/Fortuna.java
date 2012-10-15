@@ -9,6 +9,7 @@ import se.grunka.fortuna.entropy.GarbageCollectorEntropySource;
 import se.grunka.fortuna.entropy.LoadAverageEntropySource;
 import se.grunka.fortuna.entropy.SchedulingEntropySource;
 import se.grunka.fortuna.entropy.ThreadTimeEntropySource;
+import se.grunka.fortuna.entropy.UptimeEntropySource;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
@@ -39,6 +40,7 @@ public class Fortuna extends Random {
         accumulator.addSource(new LoadAverageEntropySource());
         accumulator.addSource(new FreeMemoryEntropySource());
         accumulator.addSource(new ThreadTimeEntropySource());
+        accumulator.addSource(new UptimeEntropySource());
         //TODO ... or wait for seed file to be used
         while (pools[0].size() < MIN_POOL_SIZE) {
             try {
