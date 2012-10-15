@@ -27,7 +27,7 @@ public class UptimeEntropySourceTest {
                 new EventScheduler() {
                     @Override
                     public void schedule(long delay, TimeUnit timeUnit) {
-                        assertEquals(100, timeUnit.toMillis(delay));
+                        assertEquals(1000, timeUnit.toMillis(delay));
                         schedules++;
                     }
                 },
