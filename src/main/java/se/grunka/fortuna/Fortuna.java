@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantLock;
 
 import se.grunka.fortuna.accumulator.Accumulator;
 import se.grunka.fortuna.entropy.FreeMemoryEntropySource;
@@ -30,6 +31,7 @@ public class Fortuna extends Random {
     private long reseedCount = 0;
     private final Generator generator;
     private final Pool[] pools;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public static Fortuna createInstance() {
         Pool[] pools = new Pool[32];
@@ -37,7 +39,6 @@ public class Fortuna extends Random {
             pools[pool] = new Pool();
         }
         Accumulator accumulator = new Accumulator(pools);
-        //TODO ADD ALL THE SOURCES
         accumulator.addSource(new SchedulingEntropySource());
         accumulator.addSource(new GarbageCollectorEntropySource());
         accumulator.addSource(new LoadAverageEntropySource());
@@ -47,10 +48,9 @@ public class Fortuna extends Random {
         if (Files.exists(Paths.get("/dev/urandom"))) {
             accumulator.addSource(new URandomEntropySource());
         }
-        //TODO ... or wait for seed file to be used
         while (pools[0].size() < MIN_POOL_SIZE) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 throw new Error("Interrupted while waiting for initialization", e);
             }
@@ -64,24 +64,29 @@ public class Fortuna extends Random {
     }
 
     private byte[] randomData(int bytes) {
-        long now = System.currentTimeMillis();
-        if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
-            lastReseedTime = now;
-            reseedCount++;
-            byte[] seed = new byte[pools.length * 32]; // Maximum potential length
-            int seedLength = 0;
-            for (int pool = 0; pool < pools.length; pool++) {
-                if (reseedCount % POWERS_OF_TWO[pool] == 0) {
-                    System.arraycopy(pools[pool].getAndClear(), 0, seed, seedLength, 32);
-                    seedLength += 32;
+        lock.lock();
+        try {
+            long now = System.currentTimeMillis();
+            if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
+                lastReseedTime = now;
+                reseedCount++;
+                byte[] seed = new byte[pools.length * 32]; // Maximum potential length
+                int seedLength = 0;
+                for (int pool = 0; pool < pools.length; pool++) {
+                    if (reseedCount % POWERS_OF_TWO[pool] == 0) {
+                        System.arraycopy(pools[pool].getAndClear(), 0, seed, seedLength, 32);
+                        seedLength += 32;
+                    }
                 }
+                generator.reseed(Arrays.copyOf(seed, seedLength));
             }
-            generator.reseed(Arrays.copyOf(seed, seedLength));
-        }
-        if (reseedCount == 0) {
-            throw new IllegalStateException("Generator not reseeded yet");
-        } else {
-            return generator.pseudoRandomData(bytes);
+            if (reseedCount == 0) {
+                throw new IllegalStateException("Generator not reseeded yet");
+            } else {
+                return generator.pseudoRandomData(bytes);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
