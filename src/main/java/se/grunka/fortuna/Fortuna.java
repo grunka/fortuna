@@ -90,13 +90,12 @@ public class Fortuna extends Random {
         }
     }
 
-    //TODO thread safety
+    //TODO performance?
     //TODO seed file management
 
     @Override
     protected int next(int bits) {
         byte[] bytes = randomData(Util.ceil(bits, 8));
-        System.out.println("bits = " + bits + ", Arrays.toString(bytes) = " + Arrays.toString(bytes));
         int result = 0;
         for (int i = 0; i < bytes.length; i++) {
             int shift = 8 * i;

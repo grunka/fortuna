@@ -25,7 +25,7 @@ public class FortunaTest {
     public void shouldProduceRandomNumbers() throws Exception {
         int[] numbers = new int[10];
         Fortuna fortuna = Fortuna.createInstance();
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 1000000; i++) {
             numbers[fortuna.nextInt(10)]++;
         }
         int lowest = Integer.MAX_VALUE;
