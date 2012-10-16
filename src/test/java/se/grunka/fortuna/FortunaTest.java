@@ -49,8 +49,10 @@ public class FortunaTest {
     @Ignore
     @Test
     public void shouldOutputRandomData() throws Exception {
-        long remainingBytes = 100L * 1024 * 1024;
-        byte[] buffer = new byte[1024];
+        // Compression test: xz -e9zvkf random.data
+        long dataSize = 100L * 1024 * 1024;
+        long remainingBytes = dataSize;
+        byte[] buffer = new byte[1024 * 1024];
         Fortuna fortuna = Fortuna.createInstance();
         OutputStream outputStream = new BufferedOutputStream(new FileOutputStream("random.data", false));
         try {
@@ -62,7 +64,7 @@ public class FortunaTest {
             }
             long after = System.currentTimeMillis();
             long duration = after - before;
-            long bytesPerSecond = 4L * 1024 * 1024 * 1024 / (duration / 1000);
+            long bytesPerSecond = dataSize / (duration / 1000);
             System.out.println("bytesPerSecond = " + bytesPerSecond);
         } finally {
             outputStream.close();
