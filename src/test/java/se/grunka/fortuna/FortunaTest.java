@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class FortunaTest {
@@ -21,8 +22,9 @@ public class FortunaTest {
         }
     }
 
+    @Ignore
     @Test
-    public void shouldProduceRandomNumbers() throws Exception {
+    public void shouldProduceEvenDistribution() throws Exception {
         int[] numbers = new int[10];
         Fortuna fortuna = Fortuna.createInstance();
         for (int i = 0; i < 1000000; i++) {
@@ -41,6 +43,7 @@ public class FortunaTest {
         System.out.println("numbers = " + Arrays.toString(numbers));
         int percentage = (100 * (highest - lowest)) / lowest;
         System.out.println("percentage = " + percentage);
+        assertEquals(0, percentage);
     }
 
     @Ignore
