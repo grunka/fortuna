@@ -16,7 +16,7 @@ public class Image {
                 width = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
                 usage();
-                System.out.println("Width is not a number: " + args[0]);
+                System.err.println("Width is not a number: " + args[0]);
                 System.exit(1);
             }
             int height = 0;
@@ -24,12 +24,12 @@ public class Image {
                 height = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
                 usage();
-                System.out.println("Height is not a number: " + args[1]);
+                System.err.println("Height is not a number: " + args[1]);
                 System.exit(1);
             }
-            System.out.println("Initializing RNG...");
+            System.err.println("Initializing RNG...");
             Fortuna fortuna = Fortuna.createInstance();
-            System.out.println("Generating image...");
+            System.err.println("Generating image...");
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -42,6 +42,6 @@ public class Image {
     }
 
     private static void usage() {
-        System.out.println("Usage: " + Image.class.getName() + " <width> <height> <file>");
+        System.err.println("Usage: " + Image.class.getName() + " <width> <height> <file>");
     }
 }

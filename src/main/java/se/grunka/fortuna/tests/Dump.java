@@ -21,12 +21,12 @@ public class Dump {
             megabytes = Long.parseLong(args[0]);
         } catch (NumberFormatException e) {
             usage();
-            System.out.println("Megabytes was not a number: " + args[0]);
+            System.err.println("Megabytes was not a number: " + args[0]);
             System.exit(1);
         }
         if (megabytes < 1) {
             usage();
-            System.out.println("Needs to be at least one megabyte, was " + megabytes);
+            System.err.println("Needs to be at least one megabyte, was " + megabytes);
             System.exit(1);
         }
         OutputStream output;
@@ -38,25 +38,25 @@ public class Dump {
         long dataSize = megabytes * MEGABYTE;
         long remainingBytes = dataSize;
         byte[] buffer = new byte[MEGABYTE];
-        System.out.println("Initializing RNG...");
+        System.err.println("Initializing RNG...");
         Fortuna fortuna = Fortuna.createInstance();
-        System.out.println("Generating data...");
+        System.err.println("Generating data...");
         OutputStream outputStream = new BufferedOutputStream(output);
         try {
             while (remainingBytes > 0) {
                 fortuna.nextBytes(buffer);
                 outputStream.write(buffer);
                 remainingBytes -= buffer.length;
-                System.out.print((100 * (dataSize - remainingBytes) / dataSize) +  "%\r");
+                System.err.print((100 * (dataSize - remainingBytes) / dataSize) +  "%\r");
             }
         } finally {
             outputStream.close();
         }
-        System.out.println("Done");
+        System.err.println("Done");
     }
 
     private static void usage() {
-        System.out.println("Usage: " + Dump.class.getName() + " <megabytes> [<file>]");
-        System.out.println("Will generate <megabytes> of data and output them either to <file> or stdout if <file> is not specified");
+        System.err.println("Usage: " + Dump.class.getName() + " <megabytes> [<file>]");
+        System.err.println("Will generate <megabytes> of data and output them either to <file> or stdout if <file> is not specified");
     }
 }
