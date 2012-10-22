@@ -1,11 +1,5 @@
 package se.grunka.fortuna;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.junit.Ignore;
@@ -48,44 +42,4 @@ public class FortunaTest {
         System.out.println("percentage = " + percentage);
         assertEquals(0, percentage);
     }
-
-    @Ignore
-    @Test
-    public void shouldOutputRandomData() throws Exception {
-        // Compression test: xz -e9zvkf random.data
-        long dataSize = 100L * 1024 * 1024;
-        long remainingBytes = dataSize;
-        byte[] buffer = new byte[1024 * 1024];
-        Fortuna fortuna = Fortuna.createInstance();
-        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream("target/random.data", false));
-        try {
-            long before = System.currentTimeMillis();
-            while (remainingBytes > 0) {
-                fortuna.nextBytes(buffer);
-                outputStream.write(buffer);
-                remainingBytes -= buffer.length;
-            }
-            long after = System.currentTimeMillis();
-            long duration = after - before;
-            long bytesPerSecond = dataSize / (duration / 1000);
-            System.out.println("bytesPerSecond = " + bytesPerSecond);
-        } finally {
-            outputStream.close();
-        }
-    }
-
-	@Ignore
-	@Test
-	public void shouldOutputImage() throws Exception {
-		int width = 512;
-		int height = 512;
-		Fortuna fortuna = Fortuna.createInstance();
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				image.setRGB(x, y, fortuna.nextBoolean() ? 0xffffff : 0x000000);
-			}
-		}
-		ImageIO.write(image, "png", new File("target/random.png"));
-	}
 }
