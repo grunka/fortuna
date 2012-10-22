@@ -1,21 +1,17 @@
 package se.grunka.fortuna;
 
-import java.security.InvalidKeyException;
-
-import Twofish.Twofish_Algorithm;
+import Rijndael.Rijndael;
 
 public class Encryption {
-    private Object sessionKey;
+    private final Rijndael rijndael = new Rijndael();
 
     public void setKey(byte[] key) {
-        try {
-            sessionKey = Twofish_Algorithm.makeKey(key);
-        } catch (InvalidKeyException e) {
-            throw new Error("Unable to create key", e);
-        }
+        rijndael.makeKey(key, key.length * 8, Rijndael.DIR_ENCRYPT);
     }
 
     public byte[] encrypt(byte[] data) {
-        return Twofish_Algorithm.blockEncrypt(data, 0, sessionKey);
+        byte[] result = new byte[data.length];
+        rijndael.encrypt(data, result);
+        return result;
     }
 }
