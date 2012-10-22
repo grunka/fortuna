@@ -7,12 +7,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Pool {
     private final ReentrantLock lock = new ReentrantLock();
-    private final MessageDigest poolDigest;
-    private AtomicInteger size = new AtomicInteger(0);
+    private final AtomicInteger size = new AtomicInteger(0);
+    private final MessageDigest poolDigest = createDigest();
 
-    public Pool() {
+    private MessageDigest createDigest() {
         try {
-            poolDigest = MessageDigest.getInstance("SHA-256");
+            return MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             throw new Error("Could not initialize digest", e);
         }
