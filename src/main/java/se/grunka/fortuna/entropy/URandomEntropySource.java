@@ -19,7 +19,7 @@ public class URandomEntropySource implements EntropySource {
             try {
                 inputStream.read(bytes);
                 adder.add(bytes);
-                scheduler.schedule(5, TimeUnit.SECONDS);
+                scheduler.schedule(100, TimeUnit.MILLISECONDS);
             } finally {
                 inputStream.close();
             }

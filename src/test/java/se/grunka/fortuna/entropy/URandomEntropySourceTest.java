@@ -27,7 +27,7 @@ public class URandomEntropySourceTest {
                 new EventScheduler() {
                     @Override
                     public void schedule(long delay, TimeUnit timeUnit) {
-                        assertEquals(5000, timeUnit.toMillis(delay));
+                        assertEquals(100, timeUnit.toMillis(delay));
                         schedules++;
                     }
                 },
