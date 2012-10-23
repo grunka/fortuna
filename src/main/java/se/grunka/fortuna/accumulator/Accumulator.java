@@ -30,7 +30,7 @@ public class Accumulator {
     }
 
     public void addSource(EntropySource entropySource) {
-        final int sourceId = sourceCount.incrementAndGet();
+        int sourceId = sourceCount.getAndIncrement();
         EventAdder eventAdder = new EventAdderImpl(sourceId, pools);
         EventScheduler eventScheduler = new EventSchedulerImpl(sourceId, eventContexts, scheduler);
         Context context = new Context(entropySource, eventAdder, eventScheduler);
