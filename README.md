@@ -2,9 +2,21 @@
 
 This is an implementation of the Fortuna PRNG, read more at [wikipedia](http://en.wikipedia.org/wiki/Fortuna_(PRNG)) or in the book [Cryptographic Engineering](http://www.schneier.com/book-ce.html) by Bruce Schneier.
 
+## Usage
+
+_TODO_
+
 ## Details
 
-_TODO add details about entropy sources and encryption_
+_TODO_
+
+### Block cipher
+
+The block cipher used is a public domain implementation of [AES-256](http://en.wikipedia.org/wiki/Advanced_Encryption_Standard), in the code it uses the original name Rijndael. The reason for not using Javas own implementation is to avoid the system configuration changes needed to be allowed to use it.
+
+### Entropy sources
+
+For entropy sources I've selected _TODO_
 
 ## Donations
 
