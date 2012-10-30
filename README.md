@@ -1,6 +1,6 @@
 # Fortuna
 
-This is an implementation of the Fortuna PRNG, read more at [wikipedia](http://en.wikipedia.org/wiki/Fortuna_(PRNG)) or in the book [Cryptographic Engineering](http://www.schneier.com/book-ce.html) by Bruce Schneier.
+This is an implementation of the Fortuna PRNG, read more at [wikipedia][fortuna] or in the book [Cryptographic Engineering][ce] by Bruce Schneier.
 
 ## Usage
 
@@ -14,7 +14,7 @@ For specifics either read the book referenced above and have a look at the code.
 
 ### Block cipher
 
-The block cipher used is a public domain implementation of [AES-256](http://en.wikipedia.org/wiki/Advanced_Encryption_Standard), in the code it uses the original name Rijndael. The reason for not using Javas own implementation is to avoid the system configuration changes needed to be allowed to use it since Java in it's default configuration only allows up to 128-bit keys.
+The block cipher used is a public domain implementation of [AES-256][aes256], in the code it uses the original name Rijndael. The reason for not using Javas own implementation is to avoid the system configuration changes needed to be allowed to use it since Java in it's default configuration only allows up to 128-bit keys.
 
 ### Entropy sources
 
@@ -25,3 +25,9 @@ For entropy sources I've selected several system dependant sources that are avai
 If you would like to support development like this from me click the link below and do the PayPal thing with any amount you see fit.
 
 [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=S5LTB8U3LVPSQ&lc=SE&item_name=Grunka%2ese&currency_code=SEK&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
+
+## References
+
+[fortuna]: http://en.wikipedia.org/wiki/Fortuna_(PRNG)
+[ce]: http://www.schneier.com/book-ce.html
+[aes256]: http://en.wikipedia.org/wiki/Advanced_Encryption_Standard
