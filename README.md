@@ -26,8 +26,6 @@ If you would like to support development like this from me click the link below 
 
 [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=S5LTB8U3LVPSQ&lc=SE&item_name=Grunka%2ese&currency_code=SEK&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
-## References
-
 [fortuna]: http://en.wikipedia.org/wiki/Fortuna_(PRNG)
 [ce]: http://www.schneier.com/book-ce.html
 [aes256]: http://en.wikipedia.org/wiki/Advanced_Encryption_Standard
