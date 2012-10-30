@@ -90,9 +90,6 @@ public class Fortuna extends Random {
         }
     }
 
-    //TODO performance?
-    //TODO seed file management
-
     @Override
     protected int next(int bits) {
         byte[] bytes = randomData(Util.ceil(bits, 8));
