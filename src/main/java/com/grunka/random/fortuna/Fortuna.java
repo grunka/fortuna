@@ -1,7 +1,7 @@
 package com.grunka.random.fortuna;
 
-import se.grunka.fortuna.accumulator.Accumulator;
-import se.grunka.fortuna.entropy.*;
+import com.grunka.random.fortuna.accumulator.Accumulator;
+import com.grunka.random.fortuna.entropy.*;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

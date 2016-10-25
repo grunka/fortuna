@@ -1,9 +1,9 @@
-package se.grunka.fortuna.entropy;
+package com.grunka.random.fortuna.entropy;
 
-import se.grunka.fortuna.Util;
-import se.grunka.fortuna.accumulator.EntropySource;
-import se.grunka.fortuna.accumulator.EventAdder;
-import se.grunka.fortuna.accumulator.EventScheduler;
+import com.grunka.random.fortuna.Util;
+import com.grunka.random.fortuna.accumulator.EntropySource;
+import com.grunka.random.fortuna.accumulator.EventAdder;
+import com.grunka.random.fortuna.accumulator.EventScheduler;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;

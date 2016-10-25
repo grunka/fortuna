@@ -1,9 +1,9 @@
-package se.grunka.fortuna.entropy;
+package com.grunka.random.fortuna.entropy;
 
+import com.grunka.random.fortuna.accumulator.EventAdder;
+import com.grunka.random.fortuna.accumulator.EventScheduler;
 import org.junit.Before;
 import org.junit.Test;
-import se.grunka.fortuna.accumulator.EventAdder;
-import se.grunka.fortuna.accumulator.EventScheduler;
 
 import java.util.concurrent.TimeUnit;
 

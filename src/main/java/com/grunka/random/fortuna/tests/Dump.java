@@ -1,6 +1,6 @@
-package se.grunka.fortuna.tests;
+package com.grunka.random.fortuna.tests;
 
-import se.grunka.fortuna.Fortuna;
+import com.grunka.random.fortuna.Fortuna;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;

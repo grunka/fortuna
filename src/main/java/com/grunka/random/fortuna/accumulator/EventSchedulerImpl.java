@@ -1,4 +1,4 @@
-package se.grunka.fortuna.accumulator;
+package com.grunka.random.fortuna.accumulator;
 
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;

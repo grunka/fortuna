@@ -1,6 +1,6 @@
-package se.grunka.fortuna.accumulator;
+package com.grunka.random.fortuna.accumulator;
 
-import se.grunka.fortuna.Pool;
+import com.grunka.random.fortuna.Pool;
 
 public class EventAdderImpl implements EventAdder {
     private int pool;

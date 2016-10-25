@@ -1,4 +1,4 @@
-package se.grunka.fortuna.accumulator;
+package com.grunka.random.fortuna.accumulator;
 
 public class Context {
     public final EntropySource source;
