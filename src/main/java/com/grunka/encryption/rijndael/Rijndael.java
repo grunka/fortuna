@@ -1,4 +1,4 @@
-package com.grunka.hash.rijndael;
+package com.grunka.encryption.rijndael;
 /**
  * Rijndael.java
  *

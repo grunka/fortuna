@@ -1,6 +1,6 @@
 package com.grunka.random.fortuna;
 
-import com.grunka.hash.rijndael.Rijndael;
+import com.grunka.encryption.rijndael.Rijndael;
 
 public class Encryption {
     private final Rijndael rijndael = new Rijndael();
