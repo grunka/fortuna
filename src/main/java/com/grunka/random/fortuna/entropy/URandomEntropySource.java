@@ -15,13 +15,11 @@ public class URandomEntropySource implements EntropySource {
     @Override
     public void event(EventScheduler scheduler, EventAdder adder) {
         try {
-            FileInputStream inputStream = new FileInputStream("/dev/urandom");
-            try {
-                inputStream.read(bytes);
+            try (FileInputStream inputStream = new FileInputStream("/dev/urandom")) {
+                int bytesRead = inputStream.read(bytes);
+                assert bytesRead == bytes.length;
                 adder.add(bytes);
                 scheduler.schedule(100, TimeUnit.MILLISECONDS);
-            } finally {
-                inputStream.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

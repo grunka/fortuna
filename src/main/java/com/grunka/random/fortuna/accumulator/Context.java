@@ -1,6 +1,6 @@
 package com.grunka.random.fortuna.accumulator;
 
-public class Context {
+class Context {
     public final EntropySource source;
     public final EventAdder adder;
     public final EventScheduler scheduler;

@@ -4,10 +4,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-public class Generator {
+class Generator {
     private static final int KEY_LENGTH = 32;
     private static final int BLOCK_LENGTH = 16;
-    private Counter counter;
+    private final Counter counter;
     private final byte[] key = new byte[KEY_LENGTH];
     private final MessageDigest reseedDigest;
     private final Encryption encryption;

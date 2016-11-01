@@ -36,21 +36,18 @@ public class Dump {
             output = System.out;
         }
         long dataSize = megabytes * MEGABYTE;
-        long remainingBytes = dataSize;
-        byte[] buffer = new byte[MEGABYTE];
         System.err.println("Initializing RNG...");
         Fortuna fortuna = Fortuna.createInstance();
         System.err.println("Generating data...");
-        OutputStream outputStream = new BufferedOutputStream(output);
-        try {
+        try (OutputStream outputStream = new BufferedOutputStream(output)) {
+            byte[] buffer = new byte[MEGABYTE];
+            long remainingBytes = dataSize;
             while (remainingBytes > 0) {
                 fortuna.nextBytes(buffer);
                 outputStream.write(buffer);
                 remainingBytes -= buffer.length;
                 System.err.print((100 * (dataSize - remainingBytes) / dataSize) +  "%\r");
             }
-        } finally {
-            outputStream.close();
         }
         System.err.println("Done");
     }

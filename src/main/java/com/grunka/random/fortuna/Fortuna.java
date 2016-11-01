@@ -16,7 +16,7 @@ public class Fortuna extends Random {
     private static int[] initializePowersOfTwo() {
         int[] result = new int[32];
         for (int power = 0; power < result.length; power++) {
-            result[power] = (int) Math.pow(2, power);
+            result[power] = (int) StrictMath.pow(2, power);
         }
         return result;
     }

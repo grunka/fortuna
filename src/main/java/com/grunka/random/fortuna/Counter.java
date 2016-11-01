@@ -1,9 +1,9 @@
 package com.grunka.random.fortuna;
 
-public class Counter {
+class Counter {
     private final byte[] state;
 
-    public Counter(int bits) {
+    Counter(int bits) {
         if (bits < 8) {
             throw new IllegalArgumentException("Too few bits");
         }
@@ -13,7 +13,7 @@ public class Counter {
         state = new byte[bits / 8];
     }
 
-    public void increment() {
+    void increment() {
         int position = 0;
         byte newValue;
         do {
@@ -22,11 +22,11 @@ public class Counter {
         while (newValue == 0 && position < state.length);
     }
 
-    public byte[] getState() {
+    byte[] getState() {
         return state;
     }
 
-    public boolean isZero() {
+    boolean isZero() {
         for (byte b : state) {
             if (b != 0) {
                 return false;

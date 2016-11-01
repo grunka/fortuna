@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Accumulator {
-    private final Map<Integer, Context> eventContexts = new ConcurrentHashMap<Integer, Context>();
+    private final Map<Integer, Context> eventContexts = new ConcurrentHashMap<>();
     private final AtomicInteger sourceCount = new AtomicInteger(0);
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
         private final ThreadFactory delegate = Executors.defaultThreadFactory();
