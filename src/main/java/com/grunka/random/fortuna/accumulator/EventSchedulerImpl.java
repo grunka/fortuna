@@ -5,13 +5,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class EventSchedulerImpl implements EventScheduler {
+class EventSchedulerImpl implements EventScheduler {
     private final AtomicBoolean scheduled = new AtomicBoolean(false);
     private final int sourceId;
     private final Map<Integer, Context> eventContexts;
     private final ScheduledExecutorService scheduler;
 
-    public EventSchedulerImpl(int sourceId, Map<Integer, Context> eventContexts, ScheduledExecutorService scheduler) {
+    EventSchedulerImpl(int sourceId, Map<Integer, Context> eventContexts, ScheduledExecutorService scheduler) {
         this.sourceId = sourceId;
         this.eventContexts = eventContexts;
         this.scheduler = scheduler;

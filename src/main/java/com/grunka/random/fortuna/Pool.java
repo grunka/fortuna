@@ -20,7 +20,7 @@ public class Pool {
         }
     }
 
-    public long size() {
+    long size() {
         readLock.lock();
         try {
             return size;
@@ -46,7 +46,7 @@ public class Pool {
         }
     }
 
-    public byte[] getAndClear() {
+    byte[] getAndClear() {
         writeLock.lock();
         try {
             size = 0;

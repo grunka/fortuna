@@ -47,8 +47,8 @@ public class PoolTest {
     public void shouldClearPoolAfterGetting() throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] bytes = new byte[34];
-        bytes[0] = 123;
-        bytes[1] = 32;
+        bytes[0] = (byte) 123;
+        bytes[1] = (byte) 32;
 
         pool.add(123, new byte[32]);
         assertEquals(34, pool.size());

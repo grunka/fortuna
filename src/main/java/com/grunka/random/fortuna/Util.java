@@ -8,7 +8,7 @@ public class Util {
         return result;
     }
 
-    public static int ceil(int value, int divisor) {
+    static int ceil(int value, int divisor) {
         return (value / divisor) + (value % divisor == 0 ? 0 : 1);
     }
 }

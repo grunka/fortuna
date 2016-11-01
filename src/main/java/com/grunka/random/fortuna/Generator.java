@@ -12,7 +12,7 @@ class Generator {
     private final MessageDigest reseedDigest;
     private final Encryption encryption;
 
-    public Generator() {
+    Generator() {
         encryption = new Encryption();
         counter = new Counter(128);
         try {
@@ -22,7 +22,7 @@ class Generator {
         }
     }
 
-    public void reseed(byte[] seed) {
+    void reseed(byte[] seed) {
         reseedDigest.update(key);
         System.arraycopy(reseedDigest.digest(seed), 0, key, 0, KEY_LENGTH);
         encryption.setKey(key);
@@ -42,7 +42,7 @@ class Generator {
         return result;
     }
 
-    public byte[] pseudoRandomData(int bytes) {
+    byte[] pseudoRandomData(int bytes) {
         if (bytes < 0 || bytes > 1048576) {
             throw new IllegalArgumentException("Cannot generate " + bytes + " bytes of random data");
         }
