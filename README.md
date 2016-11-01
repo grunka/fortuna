@@ -20,12 +20,6 @@ The block cipher used is a public domain implementation of [AES-256][aes256], in
 
 For entropy sources I've selected several system dependant sources that are available to the Java runtime. In the current version there are [seven sources](https://github.com/grunka/Fortuna/tree/master/src/main/java/se/grunka/fortuna/entropy). For most of the values only the two least significant bytes are used which ensures that the values are fairly unpredictable even though they are polled often.
 
-## Donations
-
-If you would like to support development like this from me click the link below and do the PayPal thing with any amount you see fit.
-
-[Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=S5LTB8U3LVPSQ&lc=SE&item_name=Grunka%2ese&currency_code=SEK&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
-
 [fortuna]: http://en.wikipedia.org/wiki/Fortuna_(PRNG)
 [ce]: http://www.schneier.com/book-ce.html
 [aes256]: http://en.wikipedia.org/wiki/Advanced_Encryption_Standard
