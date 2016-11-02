@@ -3,10 +3,14 @@ package com.grunka.random.fortuna;
 import com.grunka.random.fortuna.accumulator.Accumulator;
 import com.grunka.random.fortuna.entropy.*;
 
+import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
@@ -87,5 +91,56 @@ public class Fortuna extends Random {
     @Override
     public synchronized void setSeed(long seed) {
         // Does not do anything
+    }
+
+    public static void main(String[] args) throws IOException {
+        boolean hasLimit = false;
+        BigInteger limit = BigInteger.ZERO;
+        if (args.length == 1) {
+            String amount = args[0];
+            Matcher matcher = Pattern.compile("^([1-9][0-9]*)(K|M|G)?$").matcher(amount);
+            if (matcher.matches()) {
+                String number = matcher.group(1);
+                String suffix = matcher.group(2);
+                limit = new BigInteger(number);
+                if (suffix != null) {
+                    if ("K".equals(suffix)) {
+                        limit = limit.multiply(BigInteger.valueOf(1024));
+                    } else if ("M".equals(suffix)) {
+                        limit = limit.multiply(BigInteger.valueOf(1024 * 1024));
+                    } else if ("G".equals(suffix)) {
+                        limit = limit.multiply(BigInteger.valueOf(1024 * 1024 * 1024));
+                    } else {
+                        System.err.println("Unrecognized suffix");
+                        System.exit(1);
+                    }
+                }
+                hasLimit = true;
+            } else {
+                System.err.println("Unrecognized amount " + amount);
+                System.exit(1);
+            }
+        } else if (args.length > 1) {
+            System.err.println("Unrecognized parameters " + Arrays.toString(args));
+            System.exit(1);
+        }
+        Fortuna fortuna = Fortuna.createInstance();
+        final BigInteger fourK = BigInteger.valueOf(4 * 1024);
+        while (!hasLimit || limit.compareTo(BigInteger.ZERO) > 0) {
+            final byte[] buffer;
+            if (hasLimit) {
+                if (fourK.compareTo(limit) < 0) {
+                    buffer = new byte[4 * 1024];
+                    limit = limit.subtract(fourK);
+                } else {
+                    buffer = new byte[limit.intValue()];
+                    limit = BigInteger.ZERO;
+                }
+            } else {
+                buffer = new byte[4 * 1024];
+            }
+            fortuna.nextBytes(buffer);
+            System.out.write(buffer);
+        }
     }
 }
