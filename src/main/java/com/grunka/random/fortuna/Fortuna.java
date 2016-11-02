@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
@@ -23,9 +22,9 @@ public class Fortuna extends Random {
 
     private long lastReseedTime = 0;
     private long reseedCount = 0;
+    private final RandomDataBuffer randomDataBuffer;
     private final Generator generator;
     private final Pool[] pools;
-    private final ReentrantLock lock = new ReentrantLock();
 
     public static Fortuna createInstance() {
         Pool[] pools = new Pool[32];
@@ -49,55 +48,44 @@ public class Fortuna extends Random {
                 throw new Error("Interrupted while waiting for initialization", e);
             }
         }
-        return new Fortuna(new Generator(), pools);
+        return new Fortuna(new Generator(), new RandomDataBuffer(), pools);
     }
 
-    private Fortuna(Generator generator, Pool[] pools) {
+    private Fortuna(Generator generator, RandomDataBuffer randomDataBuffer, Pool[] pools) {
         this.generator = generator;
+        this.randomDataBuffer = randomDataBuffer;
         this.pools = pools;
     }
 
     private byte[] randomData(int bytes) {
-        lock.lock();
-        try {
-            long now = System.currentTimeMillis();
-            if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
-                lastReseedTime = now;
-                reseedCount++;
-                byte[] seed = new byte[pools.length * 32]; // Maximum potential length
-                int seedLength = 0;
-                for (int pool = 0; pool < pools.length; pool++) {
-                    if (reseedCount % POWERS_OF_TWO[pool] == 0) {
-                        System.arraycopy(pools[pool].getAndClear(), 0, seed, seedLength, 32);
-                        seedLength += 32;
-                    }
+        long now = System.currentTimeMillis();
+        if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
+            lastReseedTime = now;
+            reseedCount++;
+            byte[] seed = new byte[pools.length * 32]; // Maximum potential length
+            int seedLength = 0;
+            for (int pool = 0; pool < pools.length; pool++) {
+                if (reseedCount % POWERS_OF_TWO[pool] == 0) {
+                    System.arraycopy(pools[pool].getAndClear(), 0, seed, seedLength, 32);
+                    seedLength += 32;
                 }
-                generator.reseed(Arrays.copyOf(seed, seedLength));
             }
-            if (reseedCount == 0) {
-                throw new IllegalStateException("Generator not reseeded yet");
-            } else {
-                return generator.pseudoRandomData(bytes);
-            }
-        } finally {
-            lock.unlock();
+            generator.reseed(Arrays.copyOf(seed, seedLength));
+        }
+        if (reseedCount == 0) {
+            throw new IllegalStateException("Generator not reseeded yet");
+        } else {
+            return generator.pseudoRandomData(bytes);
         }
     }
 
     @Override
     protected int next(int bits) {
-        byte[] bytes = randomData(Util.ceil(bits, 8));
-        int result = 0;
-        for (int i = 0; i < bytes.length; i++) {
-            int shift = 8 * i;
-            result |= (bytes[i] << shift) & (0xff << shift);
-        }
-        return result >>> (bytes.length * 8 - bits);
+        return randomDataBuffer.next(bits, () -> randomData(1024 * 1024));
     }
 
     @Override
     public synchronized void setSeed(long seed) {
         // Does not do anything
     }
-
 }
