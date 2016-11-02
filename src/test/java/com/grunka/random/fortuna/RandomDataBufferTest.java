@@ -34,4 +34,9 @@ public class RandomDataBufferTest {
             assertEquals("" + Integer.toBinaryString(0xdeadbeef).charAt(i), Integer.toBinaryString(randomDataBuffer.next(1, dataSupplier)));
         }
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailIfNoDataIsProvided() throws Exception {
+        randomDataBuffer.next(1, () -> new byte[0]);
+    }
 }
