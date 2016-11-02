@@ -52,7 +52,7 @@ public class FortunaTest {
     @Ignore
     @Test
     public void dumpData() throws Exception {
-        dumpData(Fortuna.createInstance(), Paths.get("random.fortuna.dat"));
+        dumpData(Fortuna.createInstance(), Paths.get("random.fortuna.out"));
     }
 
     private void dumpData(Random random, Path path) throws IOException {
