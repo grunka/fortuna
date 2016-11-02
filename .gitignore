@@ -1,7 +1,7 @@
-documents
 target
 *.iml
 .idea
 .DS_Store
+*.out
 
 docs/Fortuna.html
