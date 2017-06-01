@@ -37,5 +37,16 @@ public class Accumulator {
         eventContexts.put(sourceId, context);
         eventScheduler.schedule(0, TimeUnit.MILLISECONDS);
     }
-
+    
+    public void shutdown(long l, TimeUnit tu) throws InterruptedException {
+        scheduler.shutdown();
+        
+        if (!scheduler.awaitTermination(l, tu)) {
+            scheduler.shutdownNow();
+        }
+    }
+    
+    public void shutdown() throws InterruptedException {
+        shutdown(30, TimeUnit.SECONDS);
+    }
 }
