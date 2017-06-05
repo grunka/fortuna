@@ -2,8 +2,6 @@ package com.grunka.random.fortuna.accumulator;
 
 import com.grunka.random.fortuna.Pool;
 
-import se.grunka.fortuna.Pool;
-
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;

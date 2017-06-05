@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,7 @@ public class Fortuna extends Random {
     private final RandomDataBuffer randomDataBuffer;
     private final Generator generator;
     private final Pool[] pools;
+    private final Accumulator accumulator;
 
     public static Fortuna createInstance() {
         Pool[] pools = new Pool[32];
@@ -52,13 +54,14 @@ public class Fortuna extends Random {
                 throw new Error("Interrupted while waiting for initialization", e);
             }
         }
-        return new Fortuna(new Generator(), new RandomDataBuffer(), pools);
+        return new Fortuna(new Generator(), new RandomDataBuffer(), pools, accumulator);
     }
 
-    private Fortuna(Generator generator, RandomDataBuffer randomDataBuffer, Pool[] pools) {
+    private Fortuna(Generator generator, RandomDataBuffer randomDataBuffer, Pool[] pools, Accumulator accumulator) {
         this.generator = generator;
         this.randomDataBuffer = randomDataBuffer;
         this.pools = pools;
+        this.accumulator = accumulator;
     }
 
     private byte[] randomData(int bytes) {
@@ -142,5 +145,14 @@ public class Fortuna extends Random {
             fortuna.nextBytes(buffer);
             System.out.write(buffer);
         }
+    }
+
+
+    public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
+        accumulator.shutdown(timeout, unit);
+    }
+
+    public void shutdown() throws InterruptedException {
+        shutdown(30, TimeUnit.SECONDS);
     }
 }
