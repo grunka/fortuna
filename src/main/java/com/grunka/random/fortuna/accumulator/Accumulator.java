@@ -2,6 +2,8 @@ package com.grunka.random.fortuna.accumulator;
 
 import com.grunka.random.fortuna.Pool;
 
+import se.grunka.fortuna.Pool;
+
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,4 +36,15 @@ public class Accumulator {
         eventScheduler.schedule(0, TimeUnit.MILLISECONDS);
     }
 
+    public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
+        scheduler.shutdown();
+
+        if (!scheduler.awaitTermination(timeout, unit)) {
+            scheduler.shutdownNow();
+        }
+    }
+
+    public void shutdown() throws InterruptedException {
+        shutdown(30, TimeUnit.SECONDS);
+    }
 }
