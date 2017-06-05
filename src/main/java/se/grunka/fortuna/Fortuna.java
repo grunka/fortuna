@@ -1,19 +1,14 @@
 package se.grunka.fortuna;
 
+import se.grunka.fortuna.accumulator.Accumulator;
+import se.grunka.fortuna.entropy.*;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import se.grunka.fortuna.accumulator.Accumulator;
-import se.grunka.fortuna.entropy.FreeMemoryEntropySource;
-import se.grunka.fortuna.entropy.GarbageCollectorEntropySource;
-import se.grunka.fortuna.entropy.LoadAverageEntropySource;
-import se.grunka.fortuna.entropy.SchedulingEntropySource;
-import se.grunka.fortuna.entropy.ThreadTimeEntropySource;
-import se.grunka.fortuna.entropy.URandomEntropySource;
-import se.grunka.fortuna.entropy.UptimeEntropySource;
 
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
@@ -32,6 +27,7 @@ public class Fortuna extends Random {
     private final Generator generator;
     private final Pool[] pools;
     private final ReentrantLock lock = new ReentrantLock();
+    private final Accumulator accumulator;
 
     public static Fortuna createInstance() {
         Pool[] pools = new Pool[32];
@@ -55,12 +51,13 @@ public class Fortuna extends Random {
                 throw new Error("Interrupted while waiting for initialization", e);
             }
         }
-        return new Fortuna(new Generator(), pools);
+        return new Fortuna(new Generator(), pools, accumulator);
     }
 
-    private Fortuna(Generator generator, Pool[] pools) {
+    private Fortuna(Generator generator, Pool[] pools, Accumulator accumulator) {
         this.generator = generator;
         this.pools = pools;
+        this.accumulator = accumulator;
     }
 
     private byte[] randomData(int bytes) {
@@ -104,6 +101,14 @@ public class Fortuna extends Random {
     @Override
     public synchronized void setSeed(long seed) {
         // Does not do anything
+    }
+
+    public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
+        accumulator.shutdown(timeout, unit);
+    }
+
+    public void shutdown() throws InterruptedException {
+        shutdown(30, TimeUnit.SECONDS);
     }
 
 }

@@ -1,14 +1,10 @@
 package se.grunka.fortuna.accumulator;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import se.grunka.fortuna.Pool;
+
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Accumulator {
     private final Map<Integer, Context> eventContexts = new ConcurrentHashMap<Integer, Context>();
@@ -38,4 +34,15 @@ public class Accumulator {
         eventScheduler.schedule(0, TimeUnit.MILLISECONDS);
     }
 
+    public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
+        scheduler.shutdown();
+
+        if (!scheduler.awaitTermination(timeout, unit)) {
+            scheduler.shutdownNow();
+        }
+    }
+
+    public void shutdown() throws InterruptedException {
+        shutdown(30, TimeUnit.SECONDS);
+    }
 }
