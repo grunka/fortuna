@@ -29,6 +29,10 @@ public class Accumulator {
         this.pools = pools;
     }
 
+    public Pool[] getPools() {
+        return pools;
+    }
+
     public void addSource(EntropySource entropySource) {
         int sourceId = sourceCount.getAndIncrement();
         EventAdder eventAdder = new EventAdderImpl(sourceId, pools);
