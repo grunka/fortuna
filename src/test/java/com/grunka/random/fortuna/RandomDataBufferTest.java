@@ -3,23 +3,23 @@ package com.grunka.random.fortuna;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
 public class RandomDataBufferTest {
 
     private RandomDataBuffer randomDataBuffer;
-    private Supplier<byte[]> dataSupplier;
+    private Function<Integer, byte[]> dataSupplier;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         randomDataBuffer = new RandomDataBuffer();
-        dataSupplier = () -> new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, (byte) 0xfa, (byte) 0xce, (byte) 0xfe, (byte) 0xed};
+        dataSupplier = (i) -> new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, (byte) 0xfa, (byte) 0xce, (byte) 0xfe, (byte) 0xed};
     }
 
     @Test
-    public void testGettingBits() throws Exception {
+    public void testGettingBits() {
         assertEquals("deadbeef", Integer.toHexString(randomDataBuffer.next(32, dataSupplier)));
         assertEquals("f", Integer.toHexString(randomDataBuffer.next(4, dataSupplier)));
         assertEquals("ac", Integer.toHexString(randomDataBuffer.next(8, dataSupplier)));
@@ -36,7 +36,7 @@ public class RandomDataBufferTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void shouldFailIfNoDataIsProvided() throws Exception {
-        randomDataBuffer.next(1, () -> new byte[0]);
+    public void shouldFailIfNoDataIsProvided() {
+        randomDataBuffer.next(1, (i) -> new byte[0]);
     }
 }
