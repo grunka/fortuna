@@ -29,6 +29,10 @@ public class Fortuna extends Random {
     private final Accumulator accumulator;
 
     public static Fortuna createInstance() {
+        return new Fortuna();
+    }
+
+    private static Pool[] createPools() {
         Pool[] pools = new Pool[32];
         for (int pool = 0; pool < pools.length; pool++) {
             pools[pool] = new Pool();
@@ -50,7 +54,11 @@ public class Fortuna extends Random {
                 throw new Error("Interrupted while waiting for initialization", e);
             }
         }
-        return new Fortuna(new Generator(), new RandomDataBuffer(), pools, accumulator);
+        return pools;
+    }
+
+    public Fortuna() {
+        this(new Generator(), new RandomDataBuffer(), createPools(), accumulator);
     }
 
     private Fortuna(Generator generator, RandomDataBuffer randomDataBuffer, Pool[] pools, Accumulator accumulator) {
