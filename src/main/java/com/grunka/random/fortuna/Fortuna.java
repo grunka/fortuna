@@ -31,14 +31,13 @@ public class Fortuna extends Random {
     private long reseedCount = 0;
     private final RandomDataBuffer randomDataBuffer;
     private final Generator generator;
-    private final Pool[] pools;
     private final Accumulator accumulator;
 
     public static Fortuna createInstance() {
         return new Fortuna();
     }
 
-    private static Pool[] createPools() {
+    private static Accumulator createAccumulator() {
         Pool[] pools = new Pool[32];
         for (int pool = 0; pool < pools.length; pool++) {
             pools[pool] = new Pool();
@@ -60,22 +59,22 @@ public class Fortuna extends Random {
                 throw new Error("Interrupted while waiting for initialization", e);
             }
         }
-        return pools;
+        return accumulator;
     }
 
     public Fortuna() {
-        this(new Generator(), new RandomDataBuffer(), createPools(), accumulator);
+        this(new Generator(), new RandomDataBuffer(), createAccumulator());
     }
 
-    private Fortuna(Generator generator, RandomDataBuffer randomDataBuffer, Pool[] pools, Accumulator accumulator) {
+    private Fortuna(Generator generator, RandomDataBuffer randomDataBuffer, Accumulator accumulator) {
         this.generator = generator;
         this.randomDataBuffer = randomDataBuffer;
-        this.pools = pools;
         this.accumulator = accumulator;
     }
 
     private byte[] randomData(int bytes) {
         long now = System.currentTimeMillis();
+        Pool[] pools = accumulator.getPools();
         if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
             lastReseedTime = now;
             reseedCount++;
@@ -98,7 +97,7 @@ public class Fortuna extends Random {
 
     @Override
     protected int next(int bits) {
-        return randomDataBuffer.next(bits, () -> randomData(1024 * 1024));
+        return randomDataBuffer.next(bits, this::randomData);
     }
 
     @Override

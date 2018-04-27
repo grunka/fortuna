@@ -1,17 +1,17 @@
 package com.grunka.random.fortuna;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 class RandomDataBuffer {
     private byte[] buffer = new byte[0];
     private int remainingBits = 0;
 
-    synchronized int next(int bits, Supplier<byte[]> randomDataSupplier) {
+    synchronized int next(int bits, Function<Integer, byte[]> randomDataSupplier) {
         int result = 0;
         int bitsStillToTake = bits;
         while (bitsStillToTake > 0) {
             if (remainingBits == 0) {
-                buffer = randomDataSupplier.get();
+                buffer = randomDataSupplier.apply(1024 * 1024);
                 remainingBits = buffer.length * 8;
                 if (remainingBits <= 0) {
                     throw new IllegalStateException("Could not get more bits");
