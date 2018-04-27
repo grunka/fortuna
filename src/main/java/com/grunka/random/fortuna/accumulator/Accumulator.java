@@ -45,8 +45,4 @@ public class Accumulator {
             scheduler.shutdownNow();
         }
     }
-
-    public void shutdown() throws InterruptedException {
-        shutdown(30, TimeUnit.SECONDS);
-    }
 }
