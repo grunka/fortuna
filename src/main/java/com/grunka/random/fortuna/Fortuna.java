@@ -1,7 +1,13 @@
 package com.grunka.random.fortuna;
 
 import com.grunka.random.fortuna.accumulator.Accumulator;
-import com.grunka.random.fortuna.entropy.*;
+import com.grunka.random.fortuna.entropy.FreeMemoryEntropySource;
+import com.grunka.random.fortuna.entropy.GarbageCollectorEntropySource;
+import com.grunka.random.fortuna.entropy.LoadAverageEntropySource;
+import com.grunka.random.fortuna.entropy.SchedulingEntropySource;
+import com.grunka.random.fortuna.entropy.ThreadTimeEntropySource;
+import com.grunka.random.fortuna.entropy.URandomEntropySource;
+import com.grunka.random.fortuna.entropy.UptimeEntropySource;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -100,6 +106,7 @@ public class Fortuna extends Random {
         // Does not do anything
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
         accumulator.shutdown(timeout, unit);
     }

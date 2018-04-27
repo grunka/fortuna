@@ -53,7 +53,7 @@ public class Dump {
                 fortuna.nextBytes(buffer);
                 outputStream.write(buffer);
                 remainingBytes -= buffer.length;
-                System.err.print((100 * (dataSize - remainingBytes) / dataSize) +  "%\r");
+                System.err.print((100 * (dataSize - remainingBytes) / dataSize) + "%\r");
             }
         }
         System.err.println("Done");
