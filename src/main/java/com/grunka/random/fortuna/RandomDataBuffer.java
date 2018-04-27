@@ -3,6 +3,7 @@ package com.grunka.random.fortuna;
 import java.util.function.Function;
 
 class RandomDataBuffer {
+    private static final int RANDOM_DATA_CHUNK_SIZE = 1024 * 1024;
     private byte[] buffer = new byte[0];
     private int remainingBits = 0;
 
@@ -11,7 +12,7 @@ class RandomDataBuffer {
         int bitsStillToTake = bits;
         while (bitsStillToTake > 0) {
             if (remainingBits == 0) {
-                buffer = randomDataSupplier.apply(1024 * 1024);
+                buffer = randomDataSupplier.apply(RANDOM_DATA_CHUNK_SIZE);
                 remainingBits = buffer.length * 8;
                 if (remainingBits <= 0) {
                     throw new IllegalStateException("Could not get more bits");
