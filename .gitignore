@@ -1,7 +1,11 @@
-documents
 target
 *.iml
 .idea
 .DS_Store
+*.out
+
+.classpath
+.settings
+.project
 
 docs/Fortuna.html

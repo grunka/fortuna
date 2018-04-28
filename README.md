@@ -4,9 +4,9 @@ This is an implementation of the Fortuna PRNG, read more at [wikipedia][fortuna]
 
 ## Usage
 
-It's fairly simple, add the fortuna-1.0.jar to your classpath and then create a new instance using the method createInstance on the class se.grunka.fortuna.Fortuna. What you get is a subclass of the normal Java Random class so wherever that can be used so can this. You should re-use this instance since creating a new one takes a little while, there is no gain in re-initializing it and the instance is thread safe.
+It's fairly simple, add the fortuna-2.0.jar to your classpath and then create a new instance using the method createInstance on the class com.grunka.random.fortuna.Fortuna. What you get is a subclass of the normal Java Random class so wherever that can be used so can this. You should re-use this instance since creating a new one takes a little while, there is no gain in re-initializing it and the instance is thread safe.
 
-There are two included runnable classes for outputting random data for testing purposes. [se.grunka.fortuna.tests.Image](https://github.com/grunka/Fortuna/blob/master/src/main/java/se/grunka/fortuna/tests/Image.java) and [se.grunka.fortuna.Dump](https://github.com/grunka/Fortuna/blob/master/src/main/java/se/grunka/fortuna/tests/Dump.java). Image outputs and image of specified size where each pixel is either black or white depending on a coin-flip. Dump outputs a specified number of megabytes of random data that can be used in other tools that analyze random data.
+There is an included runnable class for outputting random data for testing purposes. [com.grunka.random.fortuna.Dump](https://github.com/grunka/Fortuna/blob/master/src/main/java/se/grunka/fortuna/tests/Dump.java). Dump outputs a specified number of megabytes of random data that can be used in other tools that analyze random data.
 
 ## Details
 
@@ -19,12 +19,6 @@ The block cipher used is a public domain implementation of [AES-256][aes256], in
 ### Entropy sources
 
 For entropy sources I've selected several system dependant sources that are available to the Java runtime. In the current version there are [seven sources](https://github.com/grunka/Fortuna/tree/master/src/main/java/se/grunka/fortuna/entropy). For most of the values only the two least significant bytes are used which ensures that the values are fairly unpredictable even though they are polled often.
-
-## Donations
-
-If you would like to support development like this from me click the link below and do the PayPal thing with any amount you see fit.
-
-[Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=S5LTB8U3LVPSQ&lc=SE&item_name=Grunka%2ese&currency_code=SEK&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 [fortuna]: http://en.wikipedia.org/wiki/Fortuna_(PRNG)
 [ce]: http://www.schneier.com/book-ce.html
