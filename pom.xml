@@ -6,7 +6,7 @@
 
     <groupId>com.grunka.random.fortuna</groupId>
     <artifactId>fortuna</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>2.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
