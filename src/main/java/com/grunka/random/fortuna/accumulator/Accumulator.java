@@ -2,31 +2,23 @@ package com.grunka.random.fortuna.accumulator;
 
 import com.grunka.random.fortuna.Pool;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Accumulator {
-    private final Map<Integer, Context> eventContexts = new ConcurrentHashMap<>();
-    private final AtomicInteger sourceCount = new AtomicInteger(0);
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-        private final ThreadFactory delegate = Executors.defaultThreadFactory();
 
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = delegate.newThread(r);
-            thread.setDaemon(true);
-            return thread;
-        }
-    });
+    private final Set<Future<?>> futures = new HashSet<>();
+    private final AtomicInteger sourceCount = new AtomicInteger(0);
+    private final ScheduledExecutorService scheduler;
     private final Pool[] pools;
 
-    public Accumulator(Pool[] pools) {
+    public Accumulator(Pool[] pools, ScheduledExecutorService scheduler) {
         this.pools = pools;
+        this.scheduler = scheduler;
     }
 
     public Pool[] getPools() {
@@ -35,18 +27,22 @@ public class Accumulator {
 
     public void addSource(EntropySource entropySource) {
         int sourceId = sourceCount.getAndIncrement();
-        EventAdder eventAdder = new EventAdderImpl(sourceId, pools);
-        EventScheduler eventScheduler = new EventSchedulerImpl(sourceId, eventContexts, scheduler);
-        Context context = new Context(entropySource, eventAdder, eventScheduler);
-        eventContexts.put(sourceId, context);
-        eventScheduler.schedule(0, TimeUnit.MILLISECONDS);
+        EventAdder eventAdder = new EventAdderImpl(sourceId, pools, entropySource.getClass());
+        futures.add(
+            entropySource.schedule(() -> entropySource.event(eventAdder), scheduler)
+        );
     }
 
-    public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
-        scheduler.shutdown();
-
-        if (!scheduler.awaitTermination(timeout, unit)) {
-            scheduler.shutdownNow();
+    public void shutdown(long timeout, TimeUnit unit, boolean shutdownExecutor) throws InterruptedException {
+        for (Future<?> future : futures) {
+            future.cancel(true);
+        }
+        futures.clear();
+        if (shutdownExecutor) {
+            scheduler.shutdown();
+            if (!scheduler.awaitTermination(timeout, unit)) {
+                scheduler.shutdownNow();
+            }
         }
     }
 }

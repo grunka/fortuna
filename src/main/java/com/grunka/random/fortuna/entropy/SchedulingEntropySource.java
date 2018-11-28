@@ -3,19 +3,29 @@ package com.grunka.random.fortuna.entropy;
 import com.grunka.random.fortuna.Util;
 import com.grunka.random.fortuna.accumulator.EntropySource;
 import com.grunka.random.fortuna.accumulator.EventAdder;
-import com.grunka.random.fortuna.accumulator.EventScheduler;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SchedulingEntropySource implements EntropySource {
-    private long lastTime = 0;
+
+    private Instant lastTime = Instant.now();
 
     @Override
-    public void event(EventScheduler scheduler, EventAdder adder) {
-        long now = System.nanoTime();
-        long elapsed = now - lastTime;
+    public void event(EventAdder adder) {
+        Instant now = Instant.now();
+        long elapsed = now.isAfter(lastTime)
+            ? Duration.between(lastTime, now).toNanos()
+            : Duration.between(now, lastTime).toNanos();
         lastTime = now;
         adder.add(Util.twoLeastSignificantBytes(elapsed));
-        scheduler.schedule(10, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public Future<?> schedule(Runnable runnable, ScheduledExecutorService scheduler) {
+        return scheduler.scheduleWithFixedDelay(runnable, 0, 10, TimeUnit.MILLISECONDS);
     }
 }
