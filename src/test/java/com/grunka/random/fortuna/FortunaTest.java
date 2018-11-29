@@ -1,9 +1,10 @@
 package com.grunka.random.fortuna;
 
-import org.junit.Ignore;
+import org.apache.commons.math3.distribution.UniformRealDistribution;
+import org.apache.commons.math3.random.ISAACRandom;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -19,27 +20,32 @@ public class FortunaTest {
         }
     }
 
-    @Ignore
     @Test
-    public void shouldProduceEvenDistribution() throws Exception {
-        int[] numbers = new int[10];
+    public void shouldProduceEvenDistribution() {
+        int numbers = 1000;
+        SummaryStatistics fortunaNumbers = new SummaryStatistics();
+        SummaryStatistics isaacNumbers = new SummaryStatistics();
+        SummaryStatistics mersenneNumbers = new SummaryStatistics();
         Fortuna fortuna = Fortuna.createInstance();
-        for (int i = 0; i < 1000000; i++) {
-            numbers[fortuna.nextInt(10)]++;
+        ISAACRandom isaacRandom = new ISAACRandom();
+        MersenneTwister mersenneTwister = new MersenneTwister();
+        for (int i = 0; i < 10000000; i++) {
+            fortunaNumbers.addValue(fortuna.nextInt(numbers));
+            isaacNumbers.addValue(isaacRandom.nextInt(numbers));
+            mersenneNumbers.addValue(mersenneTwister.nextInt(numbers));
         }
-        int lowest = Integer.MAX_VALUE;
-        int highest = Integer.MIN_VALUE;
-        for (int number : numbers) {
-            if (number > highest) {
-                highest = number;
-            }
-            if (number < lowest) {
-                lowest = number;
-            }
-        }
-        System.out.println("numbers = " + Arrays.toString(numbers));
-        int percentage = (100 * (highest - lowest)) / lowest;
-        System.out.println("percentage = " + percentage);
-        assertEquals(0, percentage);
+        double varFortuna = fortunaNumbers.getVariance();
+        double varIsaac = isaacNumbers.getVariance();
+        double varMersenne = mersenneNumbers.getVariance();
+        double varUni = new UniformRealDistribution(0, numbers).getNumericalVariance();
+        double percentDifferenceFortuna = (varFortuna - varUni) / varUni;
+        double percentDifferenceIsaac = (varIsaac - varUni) / varUni;
+        double percentDifferenceMersenne = (varMersenne - varUni) / varUni;
+        System.out.println("Variances: Fortuna "+varFortuna+", ISAAC "+varIsaac+", Mersenne "+varMersenne+", Uniform "+varUni);
+        System.out.println("UniformRealDistribution vs Fortuna variance difference percent: "+percentDifferenceFortuna*100+" %");
+        System.out.println("UniformRealDistribution vs ISAAC variance difference percent: "+percentDifferenceIsaac*100+" %");
+        System.out.println("UniformRealDistribution vs Mersenne variance difference percent: "+percentDifferenceMersenne*100+" %");
+        assertEquals("UniformRealDistribution vs Fortuna variance", 0.0, percentDifferenceFortuna, 0.01);
     }
+
 }
