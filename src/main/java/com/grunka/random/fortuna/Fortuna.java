@@ -72,6 +72,7 @@ public class Fortuna extends Random {
         accumulator.addSource(new ThreadTimeEntropySource());
         accumulator.addSource(new UptimeEntropySource());
         accumulator.addSource(new MemoryPoolEntropySource());
+        accumulator.addSource(new BufferPoolEntropySource());
         if (Files.exists(Paths.get("/dev/urandom"))) {
             accumulator.addSource(new URandomEntropySource());
         }
