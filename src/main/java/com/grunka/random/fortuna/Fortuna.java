@@ -13,6 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class Fortuna extends Random {
@@ -32,17 +35,54 @@ public class Fortuna extends Random {
     private final RandomDataBuffer randomDataBuffer;
     private final Generator generator;
     private final Accumulator accumulator;
+    private final ScheduledExecutorService scheduler;
+    private final boolean createdScheduler;
+
+    private static ScheduledExecutorService createDefaultScheduler() {
+        return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+            private final ThreadFactory delegate = Executors.defaultThreadFactory();
+
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread thread = delegate.newThread(r);
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
+    }
 
     public static Fortuna createInstance() {
         return new Fortuna();
     }
 
-    private static Accumulator createAccumulator() {
+    @SuppressWarnings("WeakerAccess")
+    public static Fortuna createInstance(ScheduledExecutorService scheduler) {
+        return new Fortuna(scheduler);
+    }
+
+    public Fortuna() {
+        ScheduledExecutorService scheduler = createDefaultScheduler();
+        this.createdScheduler = true;
+        this.generator = new Generator();
+        this.randomDataBuffer = new RandomDataBuffer();
+        this.accumulator = createAccumulator(scheduler);
+        this.scheduler = scheduler;
+    }
+
+    public Fortuna(ScheduledExecutorService scheduler) {
+        this.createdScheduler = false;
+        this.generator = new Generator();
+        this.randomDataBuffer = new RandomDataBuffer();
+        this.accumulator = createAccumulator(scheduler);
+        this.scheduler = scheduler;
+    }
+
+    private static Accumulator createAccumulator(ScheduledExecutorService scheduler) {
         Pool[] pools = new Pool[32];
         for (int pool = 0; pool < pools.length; pool++) {
             pools[pool] = new Pool();
         }
-        Accumulator accumulator = new Accumulator(pools);
+        Accumulator accumulator = new Accumulator(pools, scheduler);
         accumulator.addSource(new SchedulingEntropySource());
         accumulator.addSource(new GarbageCollectorEntropySource());
         accumulator.addSource(new LoadAverageEntropySource());
@@ -60,16 +100,6 @@ public class Fortuna extends Random {
             }
         }
         return accumulator;
-    }
-
-    public Fortuna() {
-        this(new Generator(), new RandomDataBuffer(), createAccumulator());
-    }
-
-    private Fortuna(Generator generator, RandomDataBuffer randomDataBuffer, Accumulator accumulator) {
-        this.generator = generator;
-        this.randomDataBuffer = randomDataBuffer;
-        this.accumulator = accumulator;
     }
 
     private byte[] randomData(int bytes) {
@@ -107,7 +137,13 @@ public class Fortuna extends Random {
 
     @SuppressWarnings("WeakerAccess")
     public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
-        accumulator.shutdown(timeout, unit);
+        if (createdScheduler) {
+            scheduler.shutdown();
+
+            if (!scheduler.awaitTermination(timeout, unit)) {
+                scheduler.shutdownNow();
+            }
+        }
     }
 
     public void shutdown() throws InterruptedException {
