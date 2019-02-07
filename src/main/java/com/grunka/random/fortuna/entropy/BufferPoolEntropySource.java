@@ -24,8 +24,6 @@ public class BufferPoolEntropySource implements EntropySource {
         for (BufferPoolMXBean bufferPoolMXBean : bufferPoolMXBeans) {
             sum += bufferPoolMXBean.getMemoryUsed();
         }
-        if (sum > 0) {
-            adder.add(Util.twoLeastSignificantBytes(sum));
-        }
+        adder.add(Util.twoLeastSignificantBytes(sum));
     }
 }

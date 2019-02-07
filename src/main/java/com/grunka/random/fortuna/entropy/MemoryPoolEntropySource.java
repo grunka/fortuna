@@ -34,8 +34,6 @@ public class MemoryPoolEntropySource implements EntropySource {
                 }
             }
         }
-        if (sum > 0) {
-            adder.add(Util.twoLeastSignificantBytes(sum + System.currentTimeMillis()));
-        }
+        adder.add(Util.twoLeastSignificantBytes(sum));
     }
 }
