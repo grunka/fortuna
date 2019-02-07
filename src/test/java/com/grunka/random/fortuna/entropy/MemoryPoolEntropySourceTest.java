@@ -18,12 +18,10 @@ public class MemoryPoolEntropySourceTest {
 
     @Test
     public void shouldGetMemoryPoolData() {
-        target.event(
-                event -> {
-                    assertEquals(2, event.length);
-                    adds++;
-                }
-        );
+        target.event(event -> {
+            assertEquals(2, event.length);
+            adds++;
+        });
         assertEquals(1, adds);
     }
 
