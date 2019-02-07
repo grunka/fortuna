@@ -6,7 +6,7 @@ This is an implementation of the Fortuna PRNG, read more at [wikipedia][fortuna]
 
 It's fairly simple, add the fortuna-2.0.jar to your classpath and then create a new instance using the method createInstance on the class com.grunka.random.fortuna.Fortuna. What you get is a subclass of the normal Java Random class so wherever that can be used so can this. You should re-use this instance since creating a new one takes a little while, there is no gain in re-initializing it and the instance is thread safe.
 
-There is an included runnable class for outputting random data for testing purposes. [com.grunka.random.fortuna.Dump](https://github.com/grunka/Fortuna/blob/master/src/main/java/se/grunka/fortuna/tests/Dump.java). Dump outputs a specified number of megabytes of random data that can be used in other tools that analyze random data.
+There is an included runnable class for outputting random data for testing purposes. [com.grunka.random.fortuna.Dump][dump_class]. Dump outputs a specified number of megabytes of random data that can be used in other tools that analyze random data.
 
 ## Details
 
@@ -24,3 +24,4 @@ For entropy sources I've selected several system dependant sources that are avai
 [ce]: http://www.schneier.com/book-ce.html
 [aes256]: http://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 [entropy_sources]: https://github.com/grunka/fortuna/tree/master/src/main/java/com/grunka/random/fortuna/entropy
+[dump_class]: https://github.com/grunka/fortuna/blob/master/src/main/java/com/grunka/random/fortuna/tests/Dump.java
