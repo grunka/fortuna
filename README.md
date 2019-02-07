@@ -18,7 +18,7 @@ The block cipher used is a public domain implementation of [AES-256][aes256], in
 
 ### Entropy sources
 
-For entropy sources I've selected several system dependant sources that are available to the Java runtime. In the current version there are [nine sources](entropy_sources). For most of the values only the two least significant bytes are used which ensures that the values are fairly unpredictable even though they are polled often.
+For entropy sources I've selected several system dependant sources that are available to the Java runtime. In the current version there are [nine sources][entropy_sources]. For most of the values only the two least significant bytes are used which ensures that the values are fairly unpredictable even though they are polled often.
 
 [fortuna]: http://en.wikipedia.org/wiki/Fortuna_(PRNG)
 [ce]: http://www.schneier.com/book-ce.html
