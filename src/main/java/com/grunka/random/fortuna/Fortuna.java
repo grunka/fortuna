@@ -137,6 +137,7 @@ public class Fortuna extends Random {
 
     @SuppressWarnings("WeakerAccess")
     public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
+        accumulator.shutdownSources();
         if (createdScheduler) {
             scheduler.shutdown();
 

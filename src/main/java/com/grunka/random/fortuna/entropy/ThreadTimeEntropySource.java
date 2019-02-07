@@ -14,9 +14,13 @@ public class ThreadTimeEntropySource implements EntropySource {
     private final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
     @Override
-    public void event(EventScheduler scheduler, EventAdder adder) {
+    public void schedule(EventScheduler scheduler) {
+        scheduler.schedule(100, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void event(EventAdder adder) {
         long threadTime = threadMXBean.getCurrentThreadCpuTime() + threadMXBean.getCurrentThreadUserTime();
         adder.add(Util.twoLeastSignificantBytes(threadTime));
-        scheduler.schedule(100, TimeUnit.MILLISECONDS);
     }
 }

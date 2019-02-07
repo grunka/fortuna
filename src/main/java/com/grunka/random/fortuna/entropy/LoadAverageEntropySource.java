@@ -15,11 +15,15 @@ public class LoadAverageEntropySource implements EntropySource {
     private final OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
 
     @Override
-    public void event(EventScheduler scheduler, EventAdder adder) {
+    public void schedule(EventScheduler scheduler) {
+        scheduler.schedule(1, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void event(EventAdder adder) {
         double systemLoadAverage = operatingSystemMXBean.getSystemLoadAverage();
         BigDecimal value = BigDecimal.valueOf(systemLoadAverage);
         long convertedValue = value.movePointRight(value.scale()).longValue();
         adder.add(Util.twoLeastSignificantBytes(convertedValue));
-        scheduler.schedule(1000, TimeUnit.MILLISECONDS);
     }
 }

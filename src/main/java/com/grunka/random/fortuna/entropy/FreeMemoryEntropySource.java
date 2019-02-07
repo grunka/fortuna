@@ -9,9 +9,13 @@ import java.util.concurrent.TimeUnit;
 
 public class FreeMemoryEntropySource implements EntropySource {
     @Override
-    public void event(EventScheduler scheduler, EventAdder adder) {
+    public void schedule(EventScheduler scheduler) {
+        scheduler.schedule(100, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void event(EventAdder adder) {
         long freeMemory = Runtime.getRuntime().freeMemory();
         adder.add(Util.twoLeastSignificantBytes(freeMemory));
-        scheduler.schedule(100, TimeUnit.MILLISECONDS);
     }
 }

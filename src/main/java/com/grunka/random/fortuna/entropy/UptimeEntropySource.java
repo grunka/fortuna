@@ -13,9 +13,13 @@ public class UptimeEntropySource implements EntropySource {
     private final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
 
     @Override
-    public void event(EventScheduler scheduler, EventAdder adder) {
+    public void schedule(EventScheduler scheduler) {
+        scheduler.schedule(1, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void event(EventAdder adder) {
         long uptime = runtimeMXBean.getUptime();
         adder.add(Util.twoLeastSignificantBytes(uptime));
-        scheduler.schedule(1, TimeUnit.SECONDS);
     }
 }

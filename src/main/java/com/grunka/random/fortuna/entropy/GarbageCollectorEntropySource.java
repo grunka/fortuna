@@ -14,12 +14,16 @@ public class GarbageCollectorEntropySource implements EntropySource {
     private final List<GarbageCollectorMXBean> garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
 
     @Override
-    public void event(EventScheduler scheduler, EventAdder adder) {
+    public void schedule(EventScheduler scheduler) {
+        scheduler.schedule(10, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void event(EventAdder adder) {
         long sum = 0;
         for (GarbageCollectorMXBean garbageCollectorMXBean : garbageCollectorMXBeans) {
             sum += garbageCollectorMXBean.getCollectionCount() + garbageCollectorMXBean.getCollectionTime();
         }
         adder.add(Util.twoLeastSignificantBytes(sum));
-        scheduler.schedule(10, TimeUnit.SECONDS);
     }
 }
