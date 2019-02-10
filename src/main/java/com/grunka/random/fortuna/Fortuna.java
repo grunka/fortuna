@@ -11,6 +11,7 @@ import com.grunka.random.fortuna.entropy.ThreadTimeEntropySource;
 import com.grunka.random.fortuna.entropy.URandomEntropySource;
 import com.grunka.random.fortuna.entropy.UptimeEntropySource;
 
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -66,16 +67,16 @@ public class Fortuna extends Random {
         ScheduledExecutorService scheduler = createDefaultScheduler();
         this.createdScheduler = true;
         this.generator = new Generator();
-        this.randomDataBuffer = new RandomDataBuffer();
         this.accumulator = createAccumulator(scheduler);
+        this.randomDataBuffer = new RandomDataBuffer(scheduler, this::randomData);
         this.scheduler = scheduler;
     }
 
     public Fortuna(ScheduledExecutorService scheduler) {
         this.createdScheduler = false;
         this.generator = new Generator();
-        this.randomDataBuffer = new RandomDataBuffer();
         this.accumulator = createAccumulator(scheduler);
+        this.randomDataBuffer = new RandomDataBuffer(scheduler, this::randomData);
         this.scheduler = scheduler;
     }
 
@@ -106,7 +107,7 @@ public class Fortuna extends Random {
         return accumulator;
     }
 
-    private byte[] randomData(int bytes) {
+    private ByteBuffer randomData(ByteBuffer buffer) {
         long now = System.currentTimeMillis();
         Pool[] pools = accumulator.getPools();
         if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
@@ -125,13 +126,14 @@ public class Fortuna extends Random {
         if (reseedCount == 0) {
             throw new IllegalStateException("Generator not reseeded yet");
         } else {
-            return generator.pseudoRandomData(bytes);
+            buffer.clear();
+            return (ByteBuffer) buffer.put(generator.pseudoRandomData(buffer.capacity())).flip();
         }
     }
 
     @Override
     protected int next(int bits) {
-        return randomDataBuffer.next(bits, this::randomData);
+        return randomDataBuffer.next(bits);
     }
 
     @Override
@@ -142,6 +144,7 @@ public class Fortuna extends Random {
     @SuppressWarnings("WeakerAccess")
     public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
         accumulator.shutdownSources();
+        randomDataBuffer.stopProducing();
         if (createdScheduler) {
             scheduler.shutdown();
 

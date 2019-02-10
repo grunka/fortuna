@@ -4,6 +4,9 @@ import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.random.ISAACRandom;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,10 +19,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
 
 public class FortunaTest {
     @Test
@@ -34,14 +35,14 @@ public class FortunaTest {
 
     @Test
     public void shouldProduceEvenDistribution() {
-        int numbers = 1000;
+        int numbers = 1_000;
         SummaryStatistics fortunaNumbers = new SummaryStatistics();
         SummaryStatistics isaacNumbers = new SummaryStatistics();
         SummaryStatistics mersenneNumbers = new SummaryStatistics();
         Fortuna fortuna = Fortuna.createInstance();
         ISAACRandom isaacRandom = new ISAACRandom();
         MersenneTwister mersenneTwister = new MersenneTwister();
-        for (int i = 0; i < 10000000; i++) {
+        for (int i = 0; i < 10_000_000; i++) {
             fortunaNumbers.addValue(fortuna.nextInt(numbers));
             isaacNumbers.addValue(isaacRandom.nextInt(numbers));
             mersenneNumbers.addValue(mersenneTwister.nextInt(numbers));
@@ -141,7 +142,7 @@ public class FortunaTest {
 
         @Override
         public Future<?> submit(Runnable task) {
-            throw new UnsupportedOperationException();
+            return delegate.submit(task);
         }
 
         @Override
