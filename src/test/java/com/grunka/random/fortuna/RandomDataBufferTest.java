@@ -3,19 +3,19 @@ package com.grunka.random.fortuna;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 
 public class RandomDataBufferTest {
 
     private RandomDataBuffer randomDataBuffer;
-    private Function<Integer, byte[]> dataSupplier;
+    private Supplier<byte[]> dataSupplier;
 
     @Before
     public void setUp() {
         randomDataBuffer = new RandomDataBuffer();
-        dataSupplier = (i) -> new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, (byte) 0xfa, (byte) 0xce, (byte) 0xfe, (byte) 0xed};
+        dataSupplier = () -> new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, (byte) 0xfa, (byte) 0xce, (byte) 0xfe, (byte) 0xed};
     }
 
     @Test
@@ -37,6 +37,6 @@ public class RandomDataBufferTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldFailIfNoDataIsProvided() {
-        randomDataBuffer.next(1, (i) -> new byte[0]);
+        randomDataBuffer.next(1, () -> new byte[0]);
     }
 }

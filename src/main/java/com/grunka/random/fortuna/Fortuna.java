@@ -1,15 +1,7 @@
 package com.grunka.random.fortuna;
 
 import com.grunka.random.fortuna.accumulator.Accumulator;
-import com.grunka.random.fortuna.entropy.BufferPoolEntropySource;
-import com.grunka.random.fortuna.entropy.FreeMemoryEntropySource;
-import com.grunka.random.fortuna.entropy.GarbageCollectorEntropySource;
-import com.grunka.random.fortuna.entropy.LoadAverageEntropySource;
-import com.grunka.random.fortuna.entropy.MemoryPoolEntropySource;
-import com.grunka.random.fortuna.entropy.SchedulingEntropySource;
-import com.grunka.random.fortuna.entropy.ThreadTimeEntropySource;
-import com.grunka.random.fortuna.entropy.URandomEntropySource;
-import com.grunka.random.fortuna.entropy.UptimeEntropySource;
+import com.grunka.random.fortuna.entropy.*;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class Fortuna extends Random {
     private static final int MIN_POOL_SIZE = 64;
     private static final int[] POWERS_OF_TWO = initializePowersOfTwo();
+    private static final int RANDOM_DATA_CHUNK_SIZE = 128 * 1024;
 
     private static int[] initializePowersOfTwo() {
         int[] result = new int[32];
@@ -39,6 +32,7 @@ public class Fortuna extends Random {
     private final Accumulator accumulator;
     private final ScheduledExecutorService scheduler;
     private final boolean createdScheduler;
+    private final PrefetchingSupplier<byte[]> randomDataPrefetcher;
 
     private static ScheduledExecutorService createDefaultScheduler() {
         return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
@@ -68,6 +62,7 @@ public class Fortuna extends Random {
         this.generator = new Generator();
         this.randomDataBuffer = new RandomDataBuffer();
         this.accumulator = createAccumulator(scheduler);
+        this.randomDataPrefetcher = new PrefetchingSupplier<>(this::randomData, scheduler);
         this.scheduler = scheduler;
     }
 
@@ -76,6 +71,7 @@ public class Fortuna extends Random {
         this.generator = new Generator();
         this.randomDataBuffer = new RandomDataBuffer();
         this.accumulator = createAccumulator(scheduler);
+        this.randomDataPrefetcher = new PrefetchingSupplier<>(this::randomData, scheduler);
         this.scheduler = scheduler;
     }
 
@@ -106,7 +102,7 @@ public class Fortuna extends Random {
         return accumulator;
     }
 
-    private byte[] randomData(int bytes) {
+    private byte[] randomData() {
         long now = System.currentTimeMillis();
         Pool[] pools = accumulator.getPools();
         if (pools[0].size() >= MIN_POOL_SIZE && now - lastReseedTime > 100) {
@@ -125,13 +121,13 @@ public class Fortuna extends Random {
         if (reseedCount == 0) {
             throw new IllegalStateException("Generator not reseeded yet");
         } else {
-            return generator.pseudoRandomData(bytes);
+            return generator.pseudoRandomData(RANDOM_DATA_CHUNK_SIZE);
         }
     }
 
     @Override
     protected int next(int bits) {
-        return randomDataBuffer.next(bits, this::randomData);
+        return randomDataBuffer.next(bits, randomDataPrefetcher);
     }
 
     @Override
@@ -141,6 +137,7 @@ public class Fortuna extends Random {
 
     @SuppressWarnings("WeakerAccess")
     public void shutdown(long timeout, TimeUnit unit) throws InterruptedException {
+        randomDataPrefetcher.shutdownPrefetch();
         accumulator.shutdownSources();
         if (createdScheduler) {
             scheduler.shutdown();
