@@ -45,6 +45,7 @@ public class Dump {
         long dataSize = megabytes * MEGABYTE;
         System.err.println("Initializing RNG...");
         Fortuna fortuna = Fortuna.createInstance();
+        long start = System.currentTimeMillis();
         System.err.println("Generating data...");
         try (OutputStream outputStream = new BufferedOutputStream(output)) {
             byte[] buffer = new byte[MEGABYTE];
@@ -56,7 +57,7 @@ public class Dump {
                 System.err.print((100 * (dataSize - remainingBytes) / dataSize) + "%\r");
             }
         }
-        System.err.println("Done");
+        System.err.println("Done in " + ((System.currentTimeMillis() - start) / 1000) + " seconds");
         fortuna.shutdown();
     }
 
