@@ -9,17 +9,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class FortunaTest {
     @Test
@@ -34,14 +26,14 @@ public class FortunaTest {
 
     @Test
     public void shouldProduceEvenDistribution() {
-        int numbers = 1000;
+        int numbers = 1_000;
         SummaryStatistics fortunaNumbers = new SummaryStatistics();
         SummaryStatistics isaacNumbers = new SummaryStatistics();
         SummaryStatistics mersenneNumbers = new SummaryStatistics();
         Fortuna fortuna = Fortuna.createInstance();
         ISAACRandom isaacRandom = new ISAACRandom();
         MersenneTwister mersenneTwister = new MersenneTwister();
-        for (int i = 0; i < 10000000; i++) {
+        for (int i = 0; i < 10_000_000; i++) {
             fortunaNumbers.addValue(fortuna.nextInt(numbers));
             isaacNumbers.addValue(isaacRandom.nextInt(numbers));
             mersenneNumbers.addValue(mersenneTwister.nextInt(numbers));
@@ -50,12 +42,12 @@ public class FortunaTest {
         double varIsaac = isaacNumbers.getVariance();
         double varMersenne = mersenneNumbers.getVariance();
         double varUni = new UniformRealDistribution(0, numbers).getNumericalVariance();
-        double percentDifferenceFortuna = (varFortuna - varUni) / varUni;
-        double percentDifferenceIsaac = (varIsaac - varUni) / varUni;
-        double percentDifferenceMersenne = (varMersenne - varUni) / varUni;
         System.out.println("Variances: Fortuna " + varFortuna + ", ISAAC " + varIsaac + ", Mersenne " + varMersenne + ", Uniform " + varUni);
+        double percentDifferenceFortuna = (varFortuna - varUni) / varUni;
         System.out.println("UniformRealDistribution vs Fortuna variance difference percent: " + percentDifferenceFortuna * 100 + " %");
+        double percentDifferenceIsaac = (varIsaac - varUni) / varUni;
         System.out.println("UniformRealDistribution vs ISAAC variance difference percent: " + percentDifferenceIsaac * 100 + " %");
+        double percentDifferenceMersenne = (varMersenne - varUni) / varUni;
         System.out.println("UniformRealDistribution vs Mersenne variance difference percent: " + percentDifferenceMersenne * 100 + " %");
         assertEquals("UniformRealDistribution vs Fortuna variance", 0.0, percentDifferenceFortuna, 0.01);
     }
@@ -131,7 +123,7 @@ public class FortunaTest {
 
         @Override
         public <T> Future<T> submit(Callable<T> task) {
-            throw new UnsupportedOperationException();
+            return delegate.submit(task);
         }
 
         @Override
