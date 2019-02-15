@@ -44,7 +44,7 @@ public class Dump {
         System.err.println("Generating data...");
         try (OutputStream output = getOutputStream(args)) {
             try (OutputStream outputStream = new BufferedOutputStream(output)) {
-                byte[] buffer = new byte[MEGABYTE];
+                byte[] buffer = new byte[1024];
                 long remainingBytes = dataSize;
                 while (remainingBytes > 0) {
                     fortuna.nextBytes(buffer);
