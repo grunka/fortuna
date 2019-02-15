@@ -3,6 +3,7 @@ package com.grunka.random.fortuna.tests;
 import com.grunka.random.fortuna.Fortuna;
 
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,29 +37,33 @@ public class Dump {
             System.err.println("Needs to be at least one megabyte, was " + megabytes);
             System.exit(1);
         }
-        OutputStream output;
-        if (args.length == 2) {
-            output = new FileOutputStream(args[1], false);
-        } else {
-            output = System.out;
-        }
         long dataSize = megabytes * MEGABYTE;
         System.err.println("Initializing RNG...");
         Fortuna fortuna = Fortuna.createInstance();
         long start = System.currentTimeMillis();
         System.err.println("Generating data...");
-        try (OutputStream outputStream = new BufferedOutputStream(output)) {
-            byte[] buffer = new byte[MEGABYTE];
-            long remainingBytes = dataSize;
-            while (remainingBytes > 0) {
-                fortuna.nextBytes(buffer);
-                outputStream.write(buffer);
-                remainingBytes -= buffer.length;
-                System.err.print((100 * (dataSize - remainingBytes) / dataSize) + "%\r");
+        try (OutputStream output = getOutputStream(args)) {
+            try (OutputStream outputStream = new BufferedOutputStream(output)) {
+                byte[] buffer = new byte[MEGABYTE];
+                long remainingBytes = dataSize;
+                while (remainingBytes > 0) {
+                    fortuna.nextBytes(buffer);
+                    outputStream.write(buffer);
+                    remainingBytes -= buffer.length;
+                    System.err.print((100 * (dataSize - remainingBytes) / dataSize) + "%\r");
+                }
             }
         }
         System.err.println("Done in " + ((System.currentTimeMillis() - start) / 1000) + " seconds");
         fortuna.shutdown();
+    }
+
+    private static OutputStream getOutputStream(String[] args) throws FileNotFoundException {
+        if (args.length == 2) {
+            return new FileOutputStream(args[1], false);
+        } else {
+            return System.out;
+        }
     }
 
     private static void usage() {
@@ -77,15 +82,19 @@ public class Dump {
                 String suffix = matcher.group(2);
                 limit = new BigInteger(number);
                 if (suffix != null) {
-                    if ("K".equals(suffix)) {
-                        limit = limit.multiply(BigInteger.valueOf(1024));
-                    } else if ("M".equals(suffix)) {
-                        limit = limit.multiply(BigInteger.valueOf(1024 * 1024));
-                    } else if ("G".equals(suffix)) {
-                        limit = limit.multiply(BigInteger.valueOf(1024 * 1024 * 1024));
-                    } else {
-                        System.err.println("Unrecognized suffix");
-                        System.exit(1);
+                    switch (suffix) {
+                        case "K":
+                            limit = limit.multiply(BigInteger.valueOf(1024));
+                            break;
+                        case "M":
+                            limit = limit.multiply(BigInteger.valueOf(1024 * 1024));
+                            break;
+                        case "G":
+                            limit = limit.multiply(BigInteger.valueOf(1024 * 1024 * 1024));
+                            break;
+                        default:
+                            System.err.println("Unrecognized suffix");
+                            System.exit(1);
                     }
                 }
                 hasLimit = true;

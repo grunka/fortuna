@@ -30,7 +30,7 @@ class PrefetchingSupplier<T> implements Supplier<T> {
         }
     }
 
-    public void shutdownPrefetch() {
+    void shutdownPrefetch() {
         value.getAndSet(null).cancel(true);
     }
 }
