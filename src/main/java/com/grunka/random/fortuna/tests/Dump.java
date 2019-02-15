@@ -107,19 +107,19 @@ public class Dump {
             System.exit(1);
         }
         Fortuna fortuna = Fortuna.createInstance();
-        final BigInteger fourK = BigInteger.valueOf(4 * 1024);
+        final BigInteger chunk = BigInteger.valueOf(4 * 1024);
         while (!hasLimit || limit.compareTo(BigInteger.ZERO) > 0) {
             final byte[] buffer;
             if (hasLimit) {
-                if (fourK.compareTo(limit) < 0) {
-                    buffer = new byte[4 * 1024];
-                    limit = limit.subtract(fourK);
+                if (chunk.compareTo(limit) < 0) {
+                    buffer = new byte[chunk.intValue()];
+                    limit = limit.subtract(chunk);
                 } else {
                     buffer = new byte[limit.intValue()];
                     limit = BigInteger.ZERO;
                 }
             } else {
-                buffer = new byte[4 * 1024];
+                buffer = new byte[chunk.intValue()];
             }
             fortuna.nextBytes(buffer);
             System.out.write(buffer);
