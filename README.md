@@ -4,7 +4,19 @@ This is an implementation of the Fortuna PRNG, read more at [wikipedia][fortuna]
 
 ## Usage
 
-It's fairly simple, add the fortuna-2.0.jar to your classpath and then create a new instance using the method createInstance on the class com.grunka.random.fortuna.Fortuna. What you get is a subclass of the normal Java Random class so wherever that can be used so can this. You should re-use this instance since creating a new one takes a little while, there is no gain in re-initializing it and the instance is thread safe.
+Add it as a maven dependency
+
+```xml
+<dependency>
+    <groupId>com.grunka.random.fortuna</groupId>
+    <artifactId>fortuna</artifactId>
+    <version>2.1</version>
+</dependency>
+```
+
+or clone and build (nothing more than `mvn install` is needed) and add to classpath.
+
+Due to reasons there are a couple of ways to create an instance. Either the constructor or the methods `createInstance` on [com.grunka.random.fortuna.Fortuna][fortuna_class]. Both of these ways create a subclass of Javas own Random class so this can be used wherever that would be used. The instance created should be reused. It is thread safe, creation time is noticeable, and you do not gain anything by recreating it. Due to the background threads collecting entropy running continuouslt you should call `shutdown` on the instance if you will actually not use the instance any more.
 
 There is an included runnable class for outputting random data for testing purposes. [com.grunka.random.fortuna.Dump][dump_class]. Dump outputs a specified number of megabytes of random data that can be used in other tools that analyze random data.
 
@@ -25,3 +37,4 @@ For entropy sources I've selected several system dependant sources that are avai
 [aes256]: http://en.wikipedia.org/wiki/Advanced_Encryption_Standard
 [entropy_sources]: https://github.com/grunka/fortuna/tree/master/src/main/java/com/grunka/random/fortuna/entropy
 [dump_class]: https://github.com/grunka/fortuna/blob/master/src/main/java/com/grunka/random/fortuna/tests/Dump.java
+[fortuna_class]: https://github.com/grunka/fortuna/blob/master/src/main/java/com/grunka/random/fortuna/Fortuna.java
