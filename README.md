@@ -16,7 +16,7 @@ Add it as a maven dependency
 
 or clone and build (nothing more than `mvn install` is needed) and add to classpath.
 
-Due to reasons there are a couple of ways to create an instance. Either the constructor or the methods `createInstance` on [com.grunka.random.fortuna.Fortuna][fortuna_class]. Both of these ways create a subclass of Javas own Random class so this can be used wherever that would be used. The instance created should be reused. It is thread safe, creation time is noticeable, and you do not gain anything by recreating it. Due to the background threads collecting entropy running continuouslt you should call `shutdown` on the instance if you will actually not use the instance any more.
+Due to reasons there are a couple of ways to create an instance. Either the constructor or the methods `createInstance` on [com.grunka.random.fortuna.Fortuna][fortuna_class]. Both of these ways create a subclass of Javas own Random class so this can be used wherever that would be used. The instance created should be reused. It is thread safe, creation time is noticeable, and you do not gain anything by recreating it. Due to the background threads collecting entropy running continuously you should call `shutdown` on the instance if you will actually not use the instance any more.
 
 There is an included runnable class for outputting random data for testing purposes. [com.grunka.random.fortuna.Dump][dump_class]. Dump outputs a specified number of megabytes of random data that can be used in other tools that analyze random data.
 
