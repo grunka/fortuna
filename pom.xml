@@ -6,7 +6,7 @@
 
     <groupId>com.grunka.random.fortuna</groupId>
     <artifactId>fortuna</artifactId>
-    <version>2.1-SNAPSHOT</version>
+    <version>2.2-SNAPSHOT</version>
 
     <name>Fortuna</name>
     <description>An implementation of the Fortuna RNG</description>
