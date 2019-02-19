@@ -6,7 +6,7 @@ package com.grunka.encryption.rijndael;
  *
  * Optimised Java implementation of the Rijndael (AES) block cipher.
  *
- * @author Paulo Barreto <paulo.barreto@terra.com.br>
+ * @author Paulo Barreto paulo.barreto@terra.com.br
  *
  * This software is hereby placed in the public domain.
  *
