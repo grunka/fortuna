@@ -8,6 +8,31 @@
     <artifactId>fortuna</artifactId>
     <version>2.1-SNAPSHOT</version>
 
+    <name>Fortuna</name>
+    <description>An implementation of the Fortuna RNG</description>
+    <url>https://github.com/grunka/fortuna</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>John Wästerlund</name>
+            <email>john@grunka.com</email>
+            <organization>grunka</organization>
+            <organizationUrl>https://github.com/grunka</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/grunka/fortuna.git</connection>
+        <developerConnection>scm:git:ssh://github.com:grunka/fortuna.git</developerConnection>
+        <url>http://github.com/grunka/fortuna/tree/master</url>
+    </scm>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -29,7 +54,6 @@
             </distributionManagement>
             <build>
                 <plugins>
-                    <!--
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -41,7 +65,6 @@
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-                    -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
