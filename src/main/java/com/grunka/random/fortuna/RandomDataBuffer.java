@@ -1,33 +1,40 @@
 package com.grunka.random.fortuna;
 
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 class RandomDataBuffer {
+    private final ReentrantLock lock = new ReentrantLock();
     private byte[] buffer = new byte[0];
     private int remainingBits = 0;
 
-    synchronized int next(int bits, Supplier<byte[]> randomDataSupplier) {
-        int result = 0;
-        int bitsStillToTake = bits;
-        while (bitsStillToTake > 0) {
-            if (remainingBits == 0) {
-                buffer = randomDataSupplier.get();
-                remainingBits = buffer.length * 8;
-                if (remainingBits <= 0) {
-                    throw new IllegalStateException("Could not get more bits");
+    int next(int bits, Supplier<byte[]> randomDataSupplier) {
+        lock.lock();
+        try {
+            int result = 0;
+            int bitsStillToTake = bits;
+            while (bitsStillToTake > 0) {
+                if (remainingBits == 0) {
+                    buffer = randomDataSupplier.get();
+                    remainingBits = buffer.length * 8;
+                    if (remainingBits <= 0) {
+                        throw new IllegalStateException("Could not get more bits");
+                    }
                 }
+                int remainingBitsInByte = remainingBits % 8;
+                if (remainingBitsInByte == 0) {
+                    remainingBitsInByte = 8;
+                }
+                int currentByte = buffer.length - (remainingBits / 8) - (remainingBitsInByte == 8 ? 0 : 1);
+                int bitsToTakeNow = Math.min(bitsStillToTake, remainingBitsInByte);
+                result = (result << bitsToTakeNow) | (((buffer[currentByte] >>> (remainingBitsInByte - bitsToTakeNow)) & 0xff) & mask(bitsToTakeNow));
+                remainingBits -= bitsToTakeNow;
+                bitsStillToTake -= bitsToTakeNow;
             }
-            int remainingBitsInByte = remainingBits % 8;
-            if (remainingBitsInByte == 0) {
-                remainingBitsInByte = 8;
-            }
-            int currentByte = buffer.length - (remainingBits / 8) - (remainingBitsInByte == 8 ? 0 : 1);
-            int bitsToTakeNow = Math.min(bitsStillToTake, remainingBitsInByte);
-            result = (result << bitsToTakeNow) | (((buffer[currentByte] >>> (remainingBitsInByte - bitsToTakeNow)) & 0xff) & mask(bitsToTakeNow));
-            remainingBits -= bitsToTakeNow;
-            bitsStillToTake -= bitsToTakeNow;
+            return result;
+        } finally {
+            lock.unlock();
         }
-        return result;
     }
 
     private int mask(int bits) {
