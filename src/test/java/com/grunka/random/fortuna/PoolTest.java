@@ -12,34 +12,34 @@ public class PoolTest {
     private Pool pool;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         pool = new Pool();
     }
 
     @Test
-    public void shouldCalculateSizeOfPool() throws Exception {
+    public void shouldCalculateSizeOfPool() {
         assertEquals(0, pool.size());
         pool.add(255, "Hello".getBytes());
         assertEquals(7, pool.size());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailIfSourceIsLessThanZero() throws Exception {
+    public void shouldFailIfSourceIsLessThanZero() {
         pool.add(-1, "Hello".getBytes());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailIfSourceIsGreaterThan255() throws Exception {
+    public void shouldFailIfSourceIsGreaterThan255() {
         pool.add(256, "Hello".getBytes());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailIfEventIsEmpty() throws Exception {
+    public void shouldFailIfEventIsEmpty() {
         pool.add(0, new byte[0]);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailIfEventLengthIsGreaterThan32() throws Exception {
+    public void shouldFailIfEventLengthIsGreaterThan32() {
         pool.add(0, new byte[33]);
     }
 
@@ -62,7 +62,7 @@ public class PoolTest {
     }
 
     @Test
-    public void shouldGet32BytesOfSeedData() throws Exception {
+    public void shouldGet32BytesOfSeedData() {
         byte[] bytes = pool.getAndClear();
         assertEquals(32, bytes.length);
     }

@@ -38,25 +38,16 @@ class RandomDataBuffer {
     }
 
     private int mask(int bits) {
-        switch (bits) {
-            case 1:
-                return (byte) 0b1;
-            case 2:
-                return (byte) 0b11;
-            case 3:
-                return (byte) 0b111;
-            case 4:
-                return (byte) 0b1111;
-            case 5:
-                return (byte) 0b11111;
-            case 6:
-                return (byte) 0b111111;
-            case 7:
-                return (byte) 0b1111111;
-            case 8:
-                return (byte) 0b11111111;
-            default:
-                throw new IllegalArgumentException("Too many bits or no bits at all");
-        }
+        return switch (bits) {
+            case 1 -> (byte) 0b1;
+            case 2 -> (byte) 0b11;
+            case 3 -> (byte) 0b111;
+            case 4 -> (byte) 0b1111;
+            case 5 -> (byte) 0b11111;
+            case 6 -> (byte) 0b111111;
+            case 7 -> (byte) 0b1111111;
+            case 8 -> (byte) 0b11111111;
+            default -> throw new IllegalArgumentException("Too many bits or no bits at all");
+        };
     }
 }

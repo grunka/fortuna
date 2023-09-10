@@ -16,7 +16,7 @@ Add it as a maven dependency
 
 or clone and build (nothing more than `mvn install` is needed) and add to classpath.
 
-Due to reasons there are a couple of ways to create an instance. Either the constructor or the methods `createInstance` on [com.grunka.random.fortuna.Fortuna][fortuna_class]. Both of these ways create a subclass of Javas own Random class so this can be used wherever that would be used. The instance created should be reused. It is thread safe, creation time is noticeable, and you do not gain anything by recreating it. Due to the background threads collecting entropy running continuously you should call `shutdown` on the instance if you will actually not use the instance any more.
+Due to reasons there are a couple of ways to create an instance. Either the constructor or the methods `createInstance` on [com.grunka.random.fortuna.Fortuna][fortuna_class]. Both of these ways create a subclass of Javas own Random class so this can be used wherever that would be used. The instance created should be reused. It is thread safe, creation time is noticeable, and you do not gain anything by recreating it. Due to the background threads collecting entropy running continuously you should call `shutdown` on the instance if you will actually not use the instance anymore.
 
 There is an included runnable class for outputting random data for testing purposes. [com.grunka.random.fortuna.Dump][dump_class]. Dump outputs a specified number of megabytes of random data that can be used in other tools that analyze random data.
 
@@ -26,7 +26,7 @@ For specifics either read the book referenced above and have a look at the code.
 
 ### Block cipher
 
-The block cipher used is a public domain implementation of [AES-256][aes256], in the code it uses the original name Rijndael. The reason for not using Javas own implementation is to avoid the system configuration changes needed to be allowed to use it since Java in it's default configuration only allows up to 128-bit keys.
+The block cipher used is a public domain implementation of [AES-256][aes256], in the code it uses the original name Rijndael. The reason for not using Javas own implementation is to avoid the system configuration changes needed to be allowed to use it since Java in its default configuration only allows up to 128-bit keys.
 
 ### Entropy sources
 

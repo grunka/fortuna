@@ -15,17 +15,17 @@ public class CounterTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailForInvalidNumberOfBits() throws Exception {
+    public void shouldFailForInvalidNumberOfBits() {
         new Counter(127);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFailForTooFewBits() throws Exception {
+    public void shouldFailForTooFewBits() {
         new Counter(0);
     }
 
     @Test
-    public void shouldRollOverBackToZero() throws Exception {
+    public void shouldRollOverBackToZero() {
         Counter smallCounter = new Counter(8);
         for (int i = 0; i < 256; i++) {
             smallCounter.increment();
@@ -34,12 +34,12 @@ public class CounterTest {
     }
 
     @Test
-    public void shouldBeZero() throws Exception {
+    public void shouldBeZero() {
         assertTrue(counter.isZero());
     }
 
     @Test
-    public void shouldIncrementOneStep() throws Exception {
+    public void shouldIncrementOneStep() {
         counter.increment();
         byte[] state = counter.getState();
         assertEquals(16, state.length);
@@ -48,7 +48,7 @@ public class CounterTest {
     }
 
     @Test
-    public void shouldFillFirstByteWithOnes() throws Exception {
+    public void shouldFillFirstByteWithOnes() {
         for (int i = 0; i < 255; i++) {
             counter.increment();
         }
@@ -57,7 +57,7 @@ public class CounterTest {
     }
 
     @Test
-    public void shouldRollOverIntoNextByte() throws Exception {
+    public void shouldRollOverIntoNextByte() {
         for (int i = 0; i < 256; i++) {
             counter.increment();
         }
@@ -67,7 +67,7 @@ public class CounterTest {
     }
 
     @Test
-    public void shouldRollOverIntoNextByteAgain() throws Exception {
+    public void shouldRollOverIntoNextByteAgain() {
         for (int i = 0; i < 257; i++) {
             counter.increment();
         }
@@ -77,7 +77,7 @@ public class CounterTest {
     }
 
     @Test
-    public void shouldRollOverIntoThirdByte() throws Exception {
+    public void shouldRollOverIntoThirdByte() {
         for (int i = 0; i < 256*256; i++) {
             counter.increment();
         }

@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git://github.com/grunka/fortuna.git</connection>
         <developerConnection>scm:git:ssh://github.com:grunka/fortuna.git</developerConnection>
-        <url>http://github.com/grunka/fortuna/tree/master</url>
+        <url>https://github.com/grunka/fortuna/tree/master</url>
     </scm>
 
     <properties>

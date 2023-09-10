@@ -83,18 +83,13 @@ public class Dump {
                 limit = new BigInteger(number);
                 if (suffix != null) {
                     switch (suffix) {
-                        case "K":
-                            limit = limit.multiply(BigInteger.valueOf(1024));
-                            break;
-                        case "M":
-                            limit = limit.multiply(BigInteger.valueOf(1024 * 1024));
-                            break;
-                        case "G":
-                            limit = limit.multiply(BigInteger.valueOf(1024 * 1024 * 1024));
-                            break;
-                        default:
+                        case "K" -> limit = limit.multiply(BigInteger.valueOf(1024));
+                        case "M" -> limit = limit.multiply(BigInteger.valueOf(1024 * 1024));
+                        case "G" -> limit = limit.multiply(BigInteger.valueOf(1024 * 1024 * 1024));
+                        default -> {
                             System.err.println("Unrecognized suffix");
                             System.exit(1);
+                        }
                     }
                 }
                 hasLimit = true;

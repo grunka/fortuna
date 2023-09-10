@@ -3,13 +3,9 @@ package com.grunka.encryption.rijndael;
  * Rijndael.java
  *
  * @version 1.0 (May 2001)
- *
  * Optimised Java implementation of the Rijndael (AES) block cipher.
- *
  * @author Paulo Barreto paulo.barreto@terra.com.br
- *
  * This software is hereby placed in the public domain.
- *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS
  * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -57,6 +53,7 @@ public final class Rijndael {
     /**
      * Substitution table (S-box).
      */
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
     private static final String SS =
             "\u637C\u777B\uF26B\u6FC5\u3001\u672B\uFED7\uAB76" +
                     "\uCA82\uC97D\uFA59\u47F0\uADD4\uA2AF\u9CA4\u72C0" +
@@ -111,12 +108,12 @@ public final class Rijndael {
     /**
      * Encryption key schedule
      */
-    private int rek[] = null;
+    private int[] rek = null;
 
     /**
      * Decryption key schedule
      */
-    private int rdk[] = null;
+    private int[] rdk = null;
 
     static {
         /*
@@ -216,126 +213,7 @@ public final class Rijndael {
             }
             rek[i] = rek[i - Nk] ^ temp;
         }
-        temp = 0;
     }
-
-    /*
-      * Faster implementation of the key expansion
-      * (only worthwhile in Rijndael is used in a hashing function mode).
-      */
-    /*
-    private void expandKey(byte[] cipherKey) {
-        int keyOffset = 0;
-           int i = 0;
-        int temp;
-
-        rek[0] =
-            (cipherKey[ 0]       ) << 24 |
-            (cipherKey[ 1] & 0xff) << 16 |
-            (cipherKey[ 2] & 0xff) <<  8 |
-            (cipherKey[ 3] & 0xff);
-        rek[1] =
-            (cipherKey[ 4]       ) << 24 |
-            (cipherKey[ 5] & 0xff) << 16 |
-            (cipherKey[ 6] & 0xff) <<  8 |
-            (cipherKey[ 7] & 0xff);
-        rek[2] =
-            (cipherKey[ 8]       ) << 24 |
-            (cipherKey[ 9] & 0xff) << 16 |
-            (cipherKey[10] & 0xff) <<  8 |
-            (cipherKey[11] & 0xff);
-        rek[3] =
-            (cipherKey[12]       ) << 24 |
-            (cipherKey[13] & 0xff) << 16 |
-            (cipherKey[14] & 0xff) <<  8 |
-            (cipherKey[15] & 0xff);
-        if (Nk == 4) {
-            for (;;) {
-                temp = rek[keyOffset + 3];
-                rek[keyOffset + 4] = rek[keyOffset] ^
-                    ((Se[(temp >>> 16) & 0xff]       ) << 24) ^
-                    ((Se[(temp >>>  8) & 0xff] & 0xff) << 16) ^
-                    ((Se[(temp       ) & 0xff] & 0xff) <<  8) ^
-                    ((Se[(temp >>> 24)       ] & 0xff)      ) ^
-                    rcon[i];
-                rek[keyOffset + 5] = rek[keyOffset + 1] ^ rek[keyOffset + 4];
-                rek[keyOffset + 6] = rek[keyOffset + 2] ^ rek[keyOffset + 5];
-                rek[keyOffset + 7] = rek[keyOffset + 3] ^ rek[keyOffset + 6];
-                if (++i == 10) {
-                    return;
-                }
-                keyOffset += 4;
-            }
-        }
-        rek[keyOffset + 4] =
-            (cipherKey[16]       ) << 24 |
-            (cipherKey[17] & 0xff) << 16 |
-            (cipherKey[18] & 0xff) <<  8 |
-            (cipherKey[19] & 0xff);
-        rek[keyOffset + 5] =
-            (cipherKey[20]       ) << 24 |
-            (cipherKey[21] & 0xff) << 16 |
-            (cipherKey[22] & 0xff) <<  8 |
-            (cipherKey[23] & 0xff);
-        if (Nk == 6) {
-            for (;;) {
-                temp = rek[keyOffset + 5];
-                rek[keyOffset +  6] = rek[keyOffset] ^
-                    ((Se[(temp >>> 16) & 0xff]       ) << 24) ^
-                    ((Se[(temp >>>  8) & 0xff] & 0xff) << 16) ^
-                    ((Se[(temp       ) & 0xff] & 0xff) <<  8) ^
-                    ((Se[(temp >>> 24)       ] & 0xff)      ) ^
-                    rcon[i];
-                rek[keyOffset +  7] = rek[keyOffset +  1] ^ rek[keyOffset +  6];
-                rek[keyOffset +  8] = rek[keyOffset +  2] ^ rek[keyOffset +  7];
-                rek[keyOffset +  9] = rek[keyOffset +  3] ^ rek[keyOffset +  8];
-                if (++i == 8) {
-                    return;
-                }
-                rek[keyOffset + 10] = rek[keyOffset +  4] ^ rek[keyOffset +  9];
-                rek[keyOffset + 11] = rek[keyOffset +  5] ^ rek[keyOffset + 10];
-                keyOffset += 6;
-            }
-        }
-        rek[keyOffset + 6] =
-            (cipherKey[24]       ) << 24 |
-            (cipherKey[25] & 0xff) << 16 |
-            (cipherKey[26] & 0xff) <<  8 |
-            (cipherKey[27] & 0xff);
-        rek[keyOffset + 7] =
-            (cipherKey[28]       ) << 24 |
-            (cipherKey[29] & 0xff) << 16 |
-            (cipherKey[30] & 0xff) <<  8 |
-            (cipherKey[31] & 0xff);
-        if (Nk == 8) {
-            for (;;) {
-                temp = rek[keyOffset +  7];
-                rek[keyOffset +  8] = rek[keyOffset] ^
-                    ((Se[(temp >>> 16) & 0xff]       ) << 24) ^
-                    ((Se[(temp >>>  8) & 0xff] & 0xff) << 16) ^
-                    ((Se[(temp       ) & 0xff] & 0xff) <<  8) ^
-                    ((Se[(temp >>> 24)       ] & 0xff)      ) ^
-                    rcon[i];
-                rek[keyOffset +  9] = rek[keyOffset +  1] ^ rek[keyOffset +  8];
-                rek[keyOffset + 10] = rek[keyOffset +  2] ^ rek[keyOffset +  9];
-                rek[keyOffset + 11] = rek[keyOffset +  3] ^ rek[keyOffset + 10];
-                if (++i == 7) {
-                    return;
-                }
-                temp = rek[keyOffset + 11];
-                rek[keyOffset + 12] = rek[keyOffset +  4] ^
-                    ((Se[(temp >>> 24)       ]       ) << 24) ^
-                    ((Se[(temp >>> 16) & 0xff] & 0xff) << 16) ^
-                    ((Se[(temp >>>  8) & 0xff] & 0xff) <<  8) ^
-                    ((Se[(temp       ) & 0xff] & 0xff));
-                rek[keyOffset + 13] = rek[keyOffset +  5] ^ rek[keyOffset + 12];
-                rek[keyOffset + 14] = rek[keyOffset +  6] ^ rek[keyOffset + 13];
-                rek[keyOffset + 15] = rek[keyOffset +  7] ^ rek[keyOffset + 14];
-                keyOffset += 8;
-            }
-        }
-    }
-    */
 
     /**
      * Compute the decryption schedule from the encryption schedule .
@@ -406,31 +284,10 @@ public final class Rijndael {
         rdk = new int[Nw];
         if ((direction & DIR_BOTH) != 0) {
             expandKey(cipherKey);
-            /*
-            for (int r = 0; r <= Nr; r++) {
-            	System.out.print("RK" + r + "=");
-            	for (int i = 0; i < 4; i++) {
-            		int w = rek[4*r + i];
-            		System.out.print(" " + Integer.toHexString(w));
-            	}
-            	System.out.println();
-            }
-            */
             if ((direction & DIR_DECRYPT) != 0) {
                 invertKey();
             }
         }
-    }
-
-    /**
-     * Setup the AES key schedule (any cipher direction).
-     *
-     * @param   cipherKey   the cipher key (128, 192, or 256 bits).
-     * @param   keyBits     size of the cipher key in bits.
-     */
-    public void makeKey(byte[] cipherKey, int keyBits)
-            throws RuntimeException {
-        makeKey(cipherKey, keyBits, DIR_BOTH);
     }
 
     /**
@@ -440,6 +297,12 @@ public final class Rijndael {
      * @param   ct          ciphertext block.
      */
     public void encrypt(byte[] pt, byte[] ct) {
+        if (pt.length != BLOCK_SIZE) {
+            throw new IllegalArgumentException("Plain text is incorrect size");
+        }
+        if (ct.length != BLOCK_SIZE) {
+            throw new IllegalArgumentException("Cipher text is incorrect size");
+        }
         /*
 	     * map byte array block to cipher state
 	     * and add initial round key:
@@ -522,6 +385,7 @@ public final class Rijndael {
         ct[15] = (byte)(Se[(t2       ) & 0xff] ^ (v       ));
     }
 
+
     /**
      * Decrypt exactly one block (BLOCK_SIZE bytes) of ciphertext.
      *
@@ -529,6 +393,12 @@ public final class Rijndael {
      * @param   pt          plaintext block.
      */
     public void decrypt(byte[] ct, byte[] pt) {
+        if (pt.length != BLOCK_SIZE) {
+            throw new IllegalArgumentException("Plain text is incorrect size");
+        }
+        if (ct.length != BLOCK_SIZE) {
+            throw new IllegalArgumentException("Cipher text is incorrect size");
+        }
         /*
 	     * map byte array block to cipher state
 	     * and add initial round key:
@@ -609,23 +479,5 @@ public final class Rijndael {
         pt[13] = (byte)(Sd[(t2 >>> 16) & 0xff] ^ (v >>> 16));
         pt[14] = (byte)(Sd[(t1 >>>  8) & 0xff] ^ (v >>>  8));
         pt[15] = (byte)(Sd[(t0       ) & 0xff] ^ (v       ));
-    }
-
-    /**
-     * Destroy all sensitive information in this object.
-     */
-    protected final void finalize() {
-        if (rek != null) {
-            for (int i = 0; i < rek.length; i++) {
-                rek[i] = 0;
-            }
-            rek = null;
-        }
-        if (rdk != null) {
-            for (int i = 0; i < rdk.length; i++) {
-                rdk[i] = 0;
-            }
-            rdk = null;
-        }
     }
 }
