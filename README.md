@@ -10,7 +10,7 @@ Add it as a maven dependency
 <dependency>
     <groupId>com.grunka.random.fortuna</groupId>
     <artifactId>fortuna</artifactId>
-    <version>2.1</version>
+    <version>2.2</version>
 </dependency>
 ```
 
